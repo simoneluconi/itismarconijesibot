@@ -144,8 +144,10 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
     $reply.= "\xF0\x9F\x95\x9B <b>5° Ora</b>: 11.35 - 12.25\n";
     $reply.= "\xF0\x9F\x95\x90 <b>6° Ora</b>: 12.25 - 13.15";
     sendMessage($chat_id, $reply);
-} else if ($message == "/id") {
+} else if ($message == "/id" || $message == "/id@itismarconijesibot" ) {
     sendMessage($chat_id, "Il tuo chat id è: " . $chat_id);
+} else if ($message == "/opensuorce") {
+    sendMessage($chat_id, "Questo bot è opensuorce \xF0\x9F\x8E\x86 Puoi visualizzare il sorgente su <a href='https://github.com/simoneluconi/itismarconijesibot/'>github</a> e contribuire al suo sviluppo. In alternativa puoi contattarmi a @simoneluconi.");
 } else if ($message == "/circolari" || $message == "/circolari@itismarconijesibot") {
     sendMessage($chat_id, message_circolari);
 } else if (strpos(strtolower($message), '/circolare_') !== false) {
