@@ -30,7 +30,6 @@ function Download_Html($url)
     curl_setopt($ch, CURLOPT_USERAGENT, $useragent);
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_REFERER, $_SERVER['REQUEST_URI']);
 
     // grab content from the website
     $content = curl_exec($ch);
@@ -85,7 +84,7 @@ function getLinkEvento($link_evento)
 
 function fatal_handler()
 {
-    header('HTTP/1.1 500 Internal Server Error');
+    //header('HTTP/1.1 500 Internal Server Error');
 }
 
 register_shutdown_function("fatal_handler");
