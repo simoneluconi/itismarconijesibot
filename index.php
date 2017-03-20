@@ -105,8 +105,8 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
     if ($num_rows == 0) {
         $result = mysql_query("INSERT INTO db_bot_telegram_itis (chat_id) VALUES ('$chat_id')");
         if ($result == 1) sendMessage($chat_id, "Benvenuto! Da questo momento iniziarai a ricevere notifiche di nuove circolari, eventi e altre comunicazioni \xF0\x9F\x98\x89");
-        else sendMessage($chat_id, "Ops...c'� stato un problema nell'avviare il bot \xF0\x9F\x98\x94");
-    } else sendMessage($chat_id, "Sei gi� stato aggiunto \xF0\x9F\x98\x89");
+        else sendMessage($chat_id, "Ops...c'è stato un problema nell'avviare il bot \xF0\x9F\x98\x94");
+    } else sendMessage($chat_id, "Sei giè stato aggiunto \xF0\x9F\x98\x89");
 } else if ($message == "/stop" || $message == "/stop@itismarconijesibot") {
     mysql_query("DELETE FROM db_bot_telegram_itis where chat_id='$chat_id'", $link);
     sendMessage($chat_id, "Mi dispiace vederti andar via \xF0\x9F\x98\xA2");
@@ -127,25 +127,25 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
     remove_keyboard($chat_id, "\xF0\x9F\x93\x86 Aggiornato al: 24/10/2016");
 } else if ($message == "/ore" || $message == "/ore@itismarconijesibot") {
     $reply = "<b>Suddivisione oraria dei giorni</b>\n";
-    $reply.= "\xF0\x9F\x93\x85 <b>Luned� - Mercoled� - Venerd�</b>\n";
-    $reply.= "\xF0\x9F\x95\x97 <b>1� Ora</b>: 08.00 - 09.00\n";
-    $reply.= "\xF0\x9F\x95\x98 <b>2� Ora</b>: 09.00 - 10.00\n";
+    $reply.= "\xF0\x9F\x93\x85 <b>Lunedì - Mercoledì - Venerdì</b>\n";
+    $reply.= "\xF0\x9F\x95\x97 <b>1° Ora</b>: 08.00 - 09.00\n";
+    $reply.= "\xF0\x9F\x95\x98 <b>2° Ora</b>: 09.00 - 10.00\n";
     $reply.= "\xF0\x9F\x95\x99 <b>Intervallo</b>: 10.00 - 10.15\n";
-    $reply.= "\xF0\x9F\x95\x99 <b>3� Ora</b>: 10.15 - 11.15\n";
-    $reply.= "\xF0\x9F\x95\x9A <b>4� Ora</b>: 11.15 - 12.15\n";
-    $reply.= "\xF0\x9F\x95\x9B <b>5� Ora</b>: 12.15 - 13.15\n";
+    $reply.= "\xF0\x9F\x95\x99 <b>3° Ora</b>: 10.15 - 11.15\n";
+    $reply.= "\xF0\x9F\x95\x9A <b>4° Ora</b>: 11.15 - 12.15\n";
+    $reply.= "\xF0\x9F\x95\x9B <b>5° Ora</b>: 12.15 - 13.15\n";
     $reply.= "\n";
-    $reply.= "\xF0\x9F\x93\x85 <b>Marted� - Gioved� - Sabato</b>\n";
-    $reply.= "\xF0\x9F\x95\x97 <b>1� Ora</b>: 08.00 - 08.50\n";
-    $reply.= "\xF0\x9F\x95\x98 <b>2� Ora</b>: 08.50 - 9.40\n";
-    $reply.= "\xF0\x9F\x95\x99 <b>3� Ora</b>: 9.40 - 10.30\n";
+    $reply.= "\xF0\x9F\x93\x85 <b>Martedì - Giovedì - Sabato</b>\n";
+    $reply.= "\xF0\x9F\x95\x97 <b>1° Ora</b>: 08.00 - 08.50\n";
+    $reply.= "\xF0\x9F\x95\x98 <b>2° Ora</b>: 08.50 - 9.40\n";
+    $reply.= "\xF0\x9F\x95\x99 <b>3° Ora</b>: 9.40 - 10.30\n";
     $reply.= "\xF0\x9F\x95\x99 <b>Intervallo</b>: 10.30 - 10.45\n";
-    $reply.= "\xF0\x9F\x95\x9A <b>4� Ora</b>: 10.45 - 11.35\n";
-    $reply.= "\xF0\x9F\x95\x9B <b>5� Ora</b>: 11.35 - 12.25\n";
-    $reply.= "\xF0\x9F\x95\x90 <b>6� Ora</b>: 12.25 - 13.15";
+    $reply.= "\xF0\x9F\x95\x9A <b>4° Ora</b>: 10.45 - 11.35\n";
+    $reply.= "\xF0\x9F\x95\x9B <b>5° Ora</b>: 11.35 - 12.25\n";
+    $reply.= "\xF0\x9F\x95\x90 <b>6° Ora</b>: 12.25 - 13.15";
     sendMessage($chat_id, $reply);
 } else if ($message == "/id") {
-    sendMessage($chat_id, "Il tuo chat id �: " . $chat_id);
+    sendMessage($chat_id, "Il tuo chat id è: " . $chat_id);
 } else if ($message == "/circolari" || $message == "/circolari@itismarconijesibot") {
     sendMessage($chat_id, message_circolari);
 } else if (strpos(strtolower($message), '/circolare_') !== false) {
@@ -222,7 +222,7 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
             while ($row = mysql_fetch_assoc($result)) {
                 $circolari_keyboard[] = array($row['titolo']);
             }
-            if (count($circolari_keyboard) == 0) sendMessage($chat_id, "Ieri non � uscita nessuna circolare \xF0\x9F\x98\x94");
+            if (count($circolari_keyboard) == 0) sendMessage($chat_id, "Ieri non è uscita nessuna circolare \xF0\x9F\x98\x94");
             else {
                 $n_circolari = count($circolari_keyboard);
                 if ($n_circolari == 1) sendKeyboard($chat_id, "Ho trovato una circolare: ", $circolari_keyboard);
@@ -236,7 +236,7 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
             while ($row = mysql_fetch_assoc($result)) {
                 $circolari_keyboard[] = array($row['titolo']);
             }
-            if (count($circolari_keyboard) == 0) sendMessage($chat_id, "Oggi non � uscita nessuna circolare \xF0\x9F\x98\x94");
+            if (count($circolari_keyboard) == 0) sendMessage($chat_id, "Oggi non è uscita nessuna circolare \xF0\x9F\x98\x94");
             else {
                 $n_circolari = count($circolari_keyboard);
                 if ($n_circolari == 1) sendKeyboard($chat_id, "Ho trovato una circolare: ", $circolari_keyboard);
@@ -255,7 +255,7 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
             while ($row = mysql_fetch_assoc($result)) {
                 $circolari_keyboard[] = array($row['titolo']);
             }
-            if (count($circolari_keyboard) == 0) sendMessage($chat_id, "Non c'� nessuna circolare in data $date_circolare_format \xF0\x9F\x98\x94");
+            if (count($circolari_keyboard) == 0) sendMessage($chat_id, "Non c'è nessuna circolare in data $date_circolare_format \xF0\x9F\x98\x94");
             else {
                 $n_circolari = count($circolari_keyboard);
                 if ($n_circolari == 1) sendKeyboard($chat_id, "Ho trovato una circolare: ", $circolari_keyboard);
@@ -390,7 +390,7 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
             }
         }
     }
-} else sendMessage($chat_id, "Mi dispiace, <b>$message</b> non � un comando valido.");
+} else sendMessage($chat_id, "Mi dispiace, <b>$message</b> non è un comando valido.");
 ?>
 
 </body>
