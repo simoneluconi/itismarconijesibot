@@ -81,7 +81,6 @@ if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
 } else {
     $ip = $_SERVER['REMOTE_ADDR'];
 }
-echo "Controllo circolari...<br /><br />";
 $input = file_get_contents("php://input");
 $updates = json_decode($input, true);
 $user_name = $updates['message']['from']['first_name'];
@@ -274,6 +273,8 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
     while ($row = mysql_fetch_assoc($result)) {
         $utenti[] = $row;
     }
+    
+    echo "Controllo circolari...<br /><br />";
     $dom = new DomDocument();
     $content = Download_Html(ITIS_URL . "/docenti-ata/circolari-e-comunicazioni.html");
     @$dom->loadHTML($content);
@@ -322,6 +323,7 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
             sendDocument($utente['chat_id'], $circolare['allegato'], $circolare['title']);
         }
     }
+
     echo "Controllo eventi...<br />";
     $table = $dom->getElementsByTagName('table')->item(1); //Eventi
     $rows = $table->getElementsByTagName('tr');
