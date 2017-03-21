@@ -73,8 +73,12 @@ function getLinkEvento($link_evento) {
     return $link_evento;
 }
 function fatal_handler() {
-    //header('HTTP/1.1 500 Internal Server Error');
-    
+    $last_error = error_get_last();
+      if ($last_error && $last_error['type']==E_ERROR)
+      {
+        header("HTTP/1.1 500 Internal Server Error");
+        echo "Ops...";
+      }
 }
 register_shutdown_function("fatal_handler");
 function shortUrl($long_url) {
