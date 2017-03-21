@@ -273,7 +273,10 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
     while ($row = mysql_fetch_assoc($result)) {
         $utenti[] = $row;
     }
-    
+
+    $n_users = count($utenti);
+    echo "Utenti registrati: <b> $n_users </b> <br><br>";
+
     echo "Controllo circolari...<br /><br />";
     $dom = new DomDocument();
     $content = Download_Html(ITIS_URL . "/docenti-ata/circolari-e-comunicazioni.html");
