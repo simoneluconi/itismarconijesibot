@@ -2,10 +2,24 @@
 
 <head>
 <title>ITIS Marconi Jesi Bot</title>
-<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<!-- Compiled and minified CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
 </head>
 
 <body>
+  <nav class="light-blue lighten-1" role="navigation">
+    <div class="nav-wrapper container">
+      <a href="#" class="brand-logo">ITIS Marconi Jesi Bot</a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="https://t.me/itismarconijesibot">Aggiungi a Telegram</a></li>
+        <li><a href="https://t.me/simoneluconi">Contattami</a></li>
+      </ul>
+    </div>
+  </nav>
+<div class="container">
 
 <?php
 include 'simple_html_dom.php';
@@ -276,9 +290,13 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
     }
 
     $n_users = count($utenti);
-    echo "Utenti registrati: <b> $n_users </b> <br><br>\n";
 
-    echo "<table style=\"width:100%\"> <tr> <th>Circolare</th> <th>Data</th> <th>Link Circolare</th> </tr>\n";
+    echo "<div class=\"row\">\n";
+    echo "<div class=\"col s6\">\n";
+    echo "<div class=\"card-panel\"> <span class=\"blue-text text-darken-2\"> Utenti registrati: <b> $n_users </b> </span> </div>\n";
+    echo "</div>\n";
+
+    echo "<table class=\"centered\"> <thead> <tr> <th>Circolare</th> <th>Data</th> <th>Link Circolare</th> </tr></thead>\n";
     $dom = new DomDocument();
     $content = Download_Html(ITIS_URL . "/docenti-ata/circolari-e-comunicazioni.html");
     @$dom->loadHTML($content);
@@ -296,7 +314,8 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
             $title_esc = mysql_real_escape_string($title);
             $data = mysql_real_escape_string($data);
             $link_circolare = ITIS_URL . $link_circolare;
-            echo "<tr> <td> $title </td> <td> $data <td> <a href='$link_circolare'>Link</a> </td> </tr>\n";
+            $t_text = strlen($title) > 80 ? substr($title,0,80)."..." : $title;
+            echo "<tbody> <tr> <td> $t_text </td> <td> $data <td> <a href='$link_circolare'>Link</a> </td> </tr> </tbody>\n";
             $result = mysql_query("SELECT * FROM db_circolari where titolo='$title_esc' AND data='$data'", $link);
             $num_rows = mysql_num_rows($result);
             if ($num_rows == 0) {
@@ -331,7 +350,7 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
     }
 
     echo "<br><br>\n";
-    echo "<table style=\"width:100%\"> <tr> <th>Evento</th> <th>Data</th> <th>Link Evento</th> </tr>\n";
+    echo "<table class=\"centered\"> <thead> <tr> <th>Evento</th> <th>Data</th> <th>Link Evento</th> </tr> </thead>\n";
     $table = $dom->getElementsByTagName('table')->item(1); //Eventi
     $rows = $table->getElementsByTagName('tr');
     $eventi = array();
@@ -341,7 +360,7 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
         $testo = $row->getElementsByTagName('span')->item(2)->nodeValue;
         $link_evento = $row->getElementsByTagName('span')->item(2)->getElementsByTagName('a')->item(0)->getattribute('onclick');
         $link_evento = getLinkEvento($link_evento);
-        echo "<tr> <td> $testo </td> <td> $data_inizio - $data_fine_ora <td> <a href='$link_evento'>Link</a> </td> </tr>\n";
+        echo "<tbody><tr> <td> $testo </td> <td> $data_inizio - $data_fine_ora <td> <a href='$link_evento'>Link</a> </td> </tr> </tbody>\n";
         $tag_array;
         if (strpos($data_fine_ora, ':') !== false) {
             $tag_array = "ora";
@@ -404,6 +423,6 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
     }
 } else sendMessage($chat_id, "Mi dispiace, <b>$message</b> non è un comando valido.");
 ?>
-
+</div>
 </body>
 </html>
