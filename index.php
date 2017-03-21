@@ -2,6 +2,7 @@
 
 <head>
 <title>ITIS Marconi Jesi Bot</title>
+<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
 <body>
@@ -275,9 +276,9 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
     }
 
     $n_users = count($utenti);
-    echo "Utenti registrati: <b> $n_users </b> <br><br>";
+    echo "Utenti registrati: <b> $n_users </b> <br><br>\n";
 
-    echo "Controllo circolari...<br /><br />";
+    echo "<table style=\"width:100%\"> <tr> <th>Circolare</th> <th>Data</th> <th>Link Circolare</th> </tr>\n";
     $dom = new DomDocument();
     $content = Download_Html(ITIS_URL . "/docenti-ata/circolari-e-comunicazioni.html");
     @$dom->loadHTML($content);
@@ -295,7 +296,7 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
             $title_esc = mysql_real_escape_string($title);
             $data = mysql_real_escape_string($data);
             $link_circolare = ITIS_URL . $link_circolare;
-            echo "<b>Circolare:</b> " . $title . "<br /><b>Data:</b> " . $data . "<br /><b>Link:</b><a href='$link_circolare'>" . $link_circolare . "</a><br /><br />";
+            echo "<tr> <td> $title </td> <td> $data <td> <a href='$link_circolare'>Link</a> </td> </tr>\n";
             $result = mysql_query("SELECT * FROM db_circolari where titolo='$title_esc' AND data='$data'", $link);
             $num_rows = mysql_num_rows($result);
             if ($num_rows == 0) {
@@ -320,6 +321,8 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
             }
         }
     }
+
+    echo "</table>\n";
     $circolari = array_reverse($circolari);
     foreach ($utenti as & $utente) {
         foreach ($circolari as & $circolare) {
@@ -327,7 +330,8 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
         }
     }
 
-    echo "Controllo eventi...<br />";
+    echo "<br><br>\n";
+    echo "<table style=\"width:100%\"> <tr> <th>Evento</th> <th>Data</th> <th>Link Evento</th> </tr>\n";
     $table = $dom->getElementsByTagName('table')->item(1); //Eventi
     $rows = $table->getElementsByTagName('tr');
     $eventi = array();
@@ -337,7 +341,7 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
         $testo = $row->getElementsByTagName('span')->item(2)->nodeValue;
         $link_evento = $row->getElementsByTagName('span')->item(2)->getElementsByTagName('a')->item(0)->getattribute('onclick');
         $link_evento = getLinkEvento($link_evento);
-        echo "<b> $data_inizio - $data_fine_ora </b>:$testo => <a href='$link_evento'>$link_evento</a> <br /> ";
+        echo "<tr> <td> $testo </td> <td> $data_inizio - $data_fine_ora <td> <a href='$link_evento'>Link</a> </td> </tr>\n";
         $tag_array;
         if (strpos($data_fine_ora, ':') !== false) {
             $tag_array = "ora";
@@ -347,6 +351,7 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
         $evento = array("data_inizio" => $data_inizio, $tag_array => $data_fine_ora, "testo" => $testo, "link" => $link_evento);
         $eventi[] = $evento;
     }
+    echo "</table>\n";
     $eventi = array_reverse($eventi);
     foreach ($eventi as & $evento) {
         $data_inizio = $evento['data_inizio'];
