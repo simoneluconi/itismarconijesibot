@@ -1,5 +1,5 @@
 # ITIS Marconi Jesi Bot
-Bot di Telegram dell'ITIS Marconi di Jesi
+Bot di Telegram per l'ITIS Marconi di Jesi
 
 [Aggiungi a Telegram](https://t.me/itismarconijesibot)
 
