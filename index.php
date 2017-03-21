@@ -322,7 +322,7 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
             $data = mysql_real_escape_string($data);
             $link_circolare = ITIS_URL . $link_circolare;
             $t_title = strlen($title) > 100 ? substr($title,0,100)."..." : $title;
-            echo "<tbody> <tr> <td> <a href='$link_circolare'>$t_title</a> </td> <td> $data <td> </tr> </tbody>\n";
+            echo "<tbody> <tr> <td> <a href='$link_circolare' target=\"_blank\">$t_title</a> </td> <td> $data <td> </tr> </tbody>\n";
             $result = mysql_query("SELECT * FROM db_circolari where titolo='$title_esc' AND data='$data'", $link);
             $num_rows = mysql_num_rows($result);
             if ($num_rows == 0) {
@@ -366,7 +366,7 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
         $testo = $row->getElementsByTagName('span')->item(2)->nodeValue;
         $link_evento = $row->getElementsByTagName('span')->item(2)->getElementsByTagName('a')->item(0)->getattribute('onclick');
         $link_evento = getLinkEvento($link_evento);
-        echo "<tbody><tr> <td> <a href='$link_evento'>$testo </a></td> <td> $data_inizio - $data_fine_ora </td> </tr> </tbody>\n";
+        echo "<tbody><tr> <td> <a href='$link_evento' target=\"_blank\">$testo </a></td> <td> $data_inizio - $data_fine_ora </td> </tr> </tbody>\n";
         $tag_array;
         if (strpos($data_fine_ora, ':') !== false) {
             $tag_array = "ora";
@@ -407,7 +407,7 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
                 $message.= "\xE2\x9C\x8F $testo \n";
                 if (!is_null($comando_circolare)) $message.= "\xF0\x9F\x93\x8E	Circolare allegata: $comando_circolare\n";
                 $evento_link = $evento['link'];
-                $message.= "\xF0\x9F\x94\x97	<a href='$evento_link'>Link all'evento</a>";
+                $message.= "\xF0\x9F\x94\x97 <a href='$evento_link'>Link all'evento</a>";
                 $testo = mysql_real_escape_string($testo);
                 $result = mysql_query("INSERT INTO db_eventi (evento, data_inizio, ora, link, circolare_allegata) VALUES ('$testo', '$data_inizio', '$ora', '$evento_link', $numero_circolare)");
                 foreach ($utenti as & $utente) {
@@ -419,7 +419,7 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
                 $message.= "\xE2\x9C\x8F $testo \n";
                 if (!is_null($comando_circolare)) $message.= "\xF0\x9F\x93\x8E	Circolare allegata: $comando_circolare\n";
                 $evento_link = $evento['link'];
-                $message.= "\xF0\x9F\x94\x97	<a href='$evento_link'>Link all'evento</a>";
+                $message.= "\xF0\x9F\x94\x97 <a href='$evento_link'>Link all'evento</a>";
                 $result = mysql_query("INSERT INTO db_eventi (evento, data_inizio, data_fine, link, circolare_allegata) VALUES ('$testo', '$data_inizio', '$data_fine', '$evento_link', $numero_circolare)");
                 foreach ($utenti as & $utente) {
                     sendMessage($utente['chat_id'], $message);
