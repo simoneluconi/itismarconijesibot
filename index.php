@@ -296,7 +296,7 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
     echo "<div class=\"card-panel\"> <span class=\"blue-text text-darken-2\"> Utenti registrati: <b> $n_users </b> </span> </div>\n";
     echo "</div>\n";
 
-    echo "<table class=\"centered\"> <thead> <tr> <th>Circolare</th> <th>Data</th> <th>Link Circolare</th> </tr></thead>\n";
+    echo "<table class=\"centered\"> <thead> <tr> <th>Circolare</th> <th>Data</th></tr></thead>\n";
     $dom = new DomDocument();
     $content = Download_Html(ITIS_URL . "/docenti-ata/circolari-e-comunicazioni.html");
     @$dom->loadHTML($content);
@@ -314,8 +314,8 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
             $title_esc = mysql_real_escape_string($title);
             $data = mysql_real_escape_string($data);
             $link_circolare = ITIS_URL . $link_circolare;
-            $t_text = strlen($title) > 80 ? substr($title,0,80)."..." : $title;
-            echo "<tbody> <tr> <td> $t_text </td> <td> $data <td> <a href='$link_circolare'>Link</a> </td> </tr> </tbody>\n";
+            $t_title = strlen($title) > 100 ? substr($title,0,100)."..." : $title;
+            echo "<tbody> <tr> <td> <a href='$link_circolare'>$t_title</a> </td> <td> $data <td> </tr> </tbody>\n";
             $result = mysql_query("SELECT * FROM db_circolari where titolo='$title_esc' AND data='$data'", $link);
             $num_rows = mysql_num_rows($result);
             if ($num_rows == 0) {
@@ -332,7 +332,6 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
                     if (!is_null($allegato)) {
                         $allegato = $allegato->getattribute('href');
                         $result = mysql_query("INSERT INTO db_circolari (titolo, data, allegato) VALUES ('$title_esc', '$data', '$allegato')");
-                        echo "<b>Allegato:</b><a href='$allegato'>$allegato</a><br /><br />";
                         $circolare = array("title" => $title, "allegato" => $allegato);
                         $circolari[] = $circolare;
                     }
@@ -350,7 +349,7 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
     }
 
     echo "<br><br>\n";
-    echo "<table class=\"centered\"> <thead> <tr> <th>Evento</th> <th>Data</th> <th>Link Evento</th> </tr> </thead>\n";
+    echo "<table class=\"centered\"> <thead> <tr> <th>Evento</th> <th>Data</th> </tr> </thead>\n";
     $table = $dom->getElementsByTagName('table')->item(1); //Eventi
     $rows = $table->getElementsByTagName('tr');
     $eventi = array();
@@ -360,7 +359,7 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
         $testo = $row->getElementsByTagName('span')->item(2)->nodeValue;
         $link_evento = $row->getElementsByTagName('span')->item(2)->getElementsByTagName('a')->item(0)->getattribute('onclick');
         $link_evento = getLinkEvento($link_evento);
-        echo "<tbody><tr> <td> $testo </td> <td> $data_inizio - $data_fine_ora <td> <a href='$link_evento'>Link</a> </td> </tr> </tbody>\n";
+        echo "<tbody><tr> <td> <a href='$link_evento'>$testo </a></td> <td> $data_inizio - $data_fine_ora </td> </tr> </tbody>\n";
         $tag_array;
         if (strpos($data_fine_ora, ':') !== false) {
             $tag_array = "ora";
