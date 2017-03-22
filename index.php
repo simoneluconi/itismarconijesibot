@@ -170,7 +170,7 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
     $reply.= "\xF0\x9F\x93\x85 Inizio lezioni: <b>Giovedì 15 Settembre 2016</b>\n";
     $reply.= "\xF0\x9F\x93\x85 Fine lezioni: <b>Giovedì 8 Giugno 2017</b>\n";
     $reply.= "\n";
-    $reply.= "\xF0\x9F\x8E\x89 La scuola restera chiusa nelle seguenti <b>giornate di festività</b>:\n";
+    $reply.= "\xF0\x9F\x8E\x89 La scuola resterà chiusa nelle seguenti <b>giornate di festività</b>:\n";
     $reply.= "• 22 Settembre 2016 (festa del Patrono)\n";
     $reply.= "• 01 Novembre 2016 (festa di tutti i Santi)\n";
     $reply.= "• 02 Novembre 2016 (commemorazione dei defunti)\n";
