@@ -30,6 +30,7 @@ define("Token", "342594609:AAFKHHMTxwsqqVwf5kHmOeRb3BZcslSrOBk");
 define("Google_Api_Key", "AIzaSyDSgH3wS8BceILLAq6I1c8pgOuoEaf09Mg");
 define("Telegram", "https://api.telegram.org/bot" . Token);
 define("ITIS_URL", "http://www.itismarconi-jesi.gov.it");
+define("HOST_URL", "http://simoneluconi.altervista.org");
 date_default_timezone_set('Europe/Rome');
 define("message_circolari", "Puoi cercare circolari scrivendo ad esempio <b>\"Circolare 220\"</b>,
 <b>\"Circolare sciopero\"</b>, <b>\"Circolari di ieri\"</b>, <b>\"Circolari di oggi\"</b> o <b>\"Circolari del 4/03/17\"</b>.");
@@ -48,9 +49,15 @@ function Download_Html($url) {
 function sendDocument($chat_id, $document, $caption) {
     file_get_contents(Telegram . "/sendDocument?chat_id=$chat_id&document=$document&caption=" . urlencode($caption));
 }
+
 function sendMessage($chat_id, $message) {
     file_get_contents(Telegram . "/sendMessage?chat_id=$chat_id&text=" . urlencode($message) . "&parse_mode=HTML");
 }
+
+function sendPhoto($chat_id, $link) {
+    file_get_contents(Telegram . "/sendPhoto?chat_id=$chat_id&photo=" . urlencode($link));
+}
+
 function remove_keyboard($chat_id, $message) {
     $resp = array("remove_keyboard" => true);
     $reply = json_encode($resp);
@@ -135,8 +142,32 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
     $array = array(array("Studenti"), array("Docenti"), array("Laboratori"), array("Recupero/Potenziamento"));
     sendKeyboard($chat_id, "Seleziona un orario: ", $array);
 } else if ($message == "Studenti") {
-    sendDocument($chat_id, ITIS_URL . "/images/stories/orario/online/itis_marconi_jesi_Orario_Classi_2016-2017_DEFINITIVO-2410.pdf", "Orario Studenti");
-    remove_keyboard($chat_id, "\xF0\x9F\x93\x86 Aggiornato al: 24/10/2016");
+    $url = "/files/orario/orario.php";
+    $response = json_decode(file_get_contents(HOST_URL."/telegram/itisbot/orario.php?tipo_orario=Studenti"));
+
+    $array = array(); $row = array(); $count = 0;
+    foreach ($response as $classe)
+    {
+        $row[] = "Classe ".$classe;
+        $count++;
+        if ($count == 3) {
+            $array[] = $row;
+            $row = array();
+            $count = 0;
+        }
+    }
+
+    sendKeyboard($chat_id, "Seleziona una classe", $array);
+
+} else if (strpos($message, 'Classe') !== false) {
+    $tmp = explode(" ", $message);
+    $url = "/files/orario/orario.php";
+    $response = json_decode(file_get_contents(HOST_URL."/telegram/itisbot/orario.php?classe=".$tmp[1]));
+    if ($response->link) {
+        remove_keyboard($chat_id, "Ti invio l'orario della classe ". $tmp1);
+        sendPhoto($chat_id, $response->link);
+    } else remove_keyboard($chat_id, "Mi dispiace, non ho trovato l'orario della classe ". $tmp[1]);
+
 } else if ($message == "Docenti") {
     sendDocument($chat_id, ITIS_URL . "/images/stories/orario/online/itis_marconi_jesi_Orario_Docenti_2016-2017_DEFINITIVO-2410.pdf", "Orario Docenti");
     remove_keyboard($chat_id, "\xF0\x9F\x93\x86 Aggiornato al: 24/10/2016");
