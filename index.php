@@ -165,6 +165,29 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
     $reply.= "\xF0\x9F\x95\x9B <b>5° Ora</b>: 11.35 - 12.25\n";
     $reply.= "\xF0\x9F\x95\x90 <b>6° Ora</b>: 12.25 - 13.15";
     sendMessage($chat_id, $reply);
+} else if ($message == "/calendario" || $message == "/calendario@itismarconijesibot") {
+    $reply = "<b>Calendario Scolastico 2016-2019</b>\n";
+    $reply.= "\xF0\x9F\x93\x85 Inizio lezioni: <b>Giovedì 15 Settembre 2016</b>\n";
+    $reply.= "\xF0\x9F\x93\x85 Fine lezioni: <b>Giovedì 8 Giugno 2017</b>\n";
+    $reply.= "\n";
+    $reply.= "\xF0\x9F\x8E\x89 La scuola restera chiusa nelle seguenti <b>giornate di festività</b>:\n";
+    $reply.= "• 22 Settembre 2016 (festa del Patrono)\n";
+    $reply.= "• 01 Novembre 2016 (festa di tutti i Santi)\n";
+    $reply.= "• 02 Novembre 2016 (commemorazione dei defunti)\n";
+    $reply.= "• 08 Dicembre 2016 (Immacolata Concezione)\n";
+    $reply.= "• 25 Dicembre 2016 (Santo Natale)\n";
+    $reply.= "• 26 Dicembre 2016 (Santo Stefano)\n";
+    $reply.= "• 01 Gennaio 2017 (Capodanno)\n";
+    $reply.= "• 06 Gennaio 2017 (Epifania)\n";
+    $reply.= "• 07 Gennaio 2017 (scelta dalla scuola)\n";
+    $reply.= "• 17 Aprile 2017 (Lunedì dell'Angelo)\n";
+    $reply.= "• 25 Aprile 2017 (anniversario della Liberazione)\n";
+    $reply.= "• 01 Maggio 2017 (festa del Lavoro)\n";
+    $reply.= "• 02 Giugno 2017 (festa nazionale della Repubblica)\n";
+    $reply.= "\n";
+    $reply.= "\xF0\x9F\x8E\x84 <b>Vacanze di Natale</b>: dal 24 Dicembre 2016 al 5 Gennaio 2017\n";
+    $reply.= "\xF0\x9F\x90\xB0 <b>Vacanze di Pasqua</b>: dal 13 Aprile 2017 al 18 Aprile 2017\n";
+    sendMessage($chat_id, $reply);
 } else if ($message == "/id" || $message == "/id@itismarconijesibot" ) {
     sendMessage($chat_id, "Il tuo chat id è: " . $chat_id);
 } else if ($message == "/opensuorce") {
@@ -354,7 +377,7 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
             sendDocument($utente['chat_id'], $circolare['allegato'], $circolare['title']);
         }
     }
-
+    
     echo "<br><br>\n";
     echo "<table class=\"centered\"> <thead> <tr> <th>Evento</th> <th>Data</th> </tr> </thead>\n";
     $table = $dom->getElementsByTagName('table')->item(1); //Eventi
