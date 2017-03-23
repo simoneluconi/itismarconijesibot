@@ -36,14 +36,14 @@ define("message_circolari", "Puoi cercare circolari scrivendo ad esempio <b>\"Ci
 <b>\"Circolare sciopero\"</b>, <b>\"Circolari di ieri\"</b>, <b>\"Circolari di oggi\"</b> o <b>\"Circolari del 4/03/17\"</b>.");
 function Download_Html($url) {
     $useragent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.1) Gecko/20061204 Firefox/2.0.0.1";
-    $ch = curl_init();
+    $curl = curl_init();
     // set user agent
-    curl_setopt($ch, CURLOPT_USERAGENT, $useragent);
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_USERAGENT, $useragent);
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     // grab content from the website
-    $content = curl_exec($ch);
-    curl_close($ch);
+    $content = curl_exec($curl);
+    curl_close($curl);
     return $content;
 }
 function sendDocument($chat_id, $document, $caption) {
@@ -117,6 +117,32 @@ $chat_id = $updates['message']['chat']['id'];
 $message = $updates['message']['text'];
 $link = mysql_connect("localhost", "simoneluconi", "");
 mysql_select_db("my_simoneluconi", $link);
+
+
+function updateLastCommand($chat_id, $command)
+{
+    if ($command) {
+    $command = mysql_real_escape_string($command);
+    $result = mysql_query("UPDATE db_bot_telegram_itis SET last_command = '$command' where chat_id='$chat_id'");
+    } else 
+    {
+    $result = mysql_query("UPDATE db_bot_telegram_itis SET last_command = NULL where chat_id='$chat_id'");
+    }
+}
+
+function getLastCommand($chat_id)
+{
+    $result = mysql_query("SELECT last_command from db_bot_telegram_itis where chat_id='$chat_id'");
+    $row = mysql_fetch_assoc($result);
+    return $row['last_command'];
+}
+
+if ($message)
+{
+    $last_command = getLastCommand($chat_id);
+    updateLastCommand($chat_id, $message);
+}
+
 $date = date('Y/m/d H:i:s');
 $details = json_decode(file_get_contents("http://ipinfo.io/{$ip}/json"));
 $ip = mysql_real_escape_string($ip);
@@ -135,13 +161,15 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
         if ($result == 1) sendMessage($chat_id, "Benvenuto! Da questo momento iniziarai a ricevere notifiche di nuove circolari, eventi e altre comunicazioni \xF0\x9F\x98\x89");
         else sendMessage($chat_id, "Ops...c'è stato un problema nell'avviare il bot \xF0\x9F\x98\x94");
     } else sendMessage($chat_id, "Sei già stato aggiunto \xF0\x9F\x98\x89");
+     updateLastCommand($chat_id, NULL);
 } else if ($message == "/stop" || $message == "/stop@itismarconijesibot") {
     mysql_query("DELETE FROM db_bot_telegram_itis where chat_id='$chat_id'", $link);
     sendMessage($chat_id, "Mi dispiace vederti andar via \xF0\x9F\x98\xA2");
+    updateLastCommand($chat_id, NULL);
 } else if ($message == "/orario" || $message == "/orario@itismarconijesibot") {
     $array = array(array("Studenti"), array("Docenti"), array("Laboratori"), array("Recupero/Potenziamento"));
     sendKeyboard($chat_id, "Seleziona un orario: ", $array);
-} else if ($message == "Studenti") {
+} else if ($message == "Studenti" && (strpos($last_command, '/orario') !== false)) {
     $url = "/files/orario/orario.php";
     $response = json_decode(file_get_contents(HOST_URL."/telegram/itisbot/orario.php?tipo_orario=Studenti"));
 
@@ -167,16 +195,19 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
         remove_keyboard($chat_id, "Ti invio l'orario della classe ". $tmp1);
         sendPhoto($chat_id, $response->link);
     } else remove_keyboard($chat_id, "Mi dispiace, non ho trovato l'orario della classe ". $tmp[1]);
-
-} else if ($message == "Docenti") {
+    updateLastCommand($chat_id, NULL);
+} else if ($message == "Docenti" && (strpos($last_command, '/orario') !== false)) {
     sendDocument($chat_id, ITIS_URL . "/images/stories/orario/online/itis_marconi_jesi_Orario_Docenti_2016-2017_DEFINITIVO-2410.pdf", "Orario Docenti");
     remove_keyboard($chat_id, "\xF0\x9F\x93\x86 Aggiornato al: 24/10/2016");
-} else if ($message == "Recupero/Potenziamento") {
+    updateLastCommand($chat_id, NULL);
+} else if ($message == "Recupero/Potenziamento" && (strpos($last_command, '/orario') !== false)) {
     sendDocument($chat_id, ITIS_URL . "/images/stories/orario/online/itismarconi-jesi_orario_potenziamento_febbraio-marzo_2017.pdf", "Orario Recupero/Potenziamento");
     remove_keyboard($chat_id, "\xF0\x9F\x93\x86 Aggiornato al: 3/3/2017");
-} else if ($message == "Laboratori") {
+    updateLastCommand($chat_id, NULL);
+} else if ($message == "Laboratori" &&  (strpos($last_command, '/orario') !== false)) {
     sendDocument($chat_id, ITIS_URL . "/images/stories/orario/online/itis_marconi_jesi_Orario_Laboratori_2016-2017_DEFINITIVO-2410.pdf", "Orario Laboratori");
     remove_keyboard($chat_id, "\xF0\x9F\x93\x86 Aggiornato al: 24/10/2016");
+    updateLastCommand($chat_id, NULL);
 } else if ($message == "/ore" || $message == "/ore@itismarconijesibot") {
     $reply = "<b>Suddivisione oraria dei giorni</b>\n";
     $reply.= "\xF0\x9F\x93\x85 <b>Lunedì - Mercoledì - Venerdì</b>\n";
@@ -221,8 +252,10 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
     sendMessage($chat_id, $reply);
 } else if ($message == "/id" || $message == "/id@itismarconijesibot" ) {
     sendMessage($chat_id, "Il tuo chat id è: " . $chat_id);
+    updateLastCommand($chat_id, NULL);
 } else if ($message == "/opensuorce") {
     sendMessage($chat_id, "Questo bot è opensuorce \xF0\x9F\x8E\x86 Puoi visualizzare il sorgente su <a href='https://github.com/simoneluconi/itismarconijesibot/'>github</a> e contribuire al suo sviluppo. In alternativa puoi contattarmi a @simoneluconi.");
+    updateLastCommand($chat_id, NULL);
 } else if ($message == "/circolari" || $message == "/circolari@itismarconijesibot") {
     sendMessage($chat_id, message_circolari);
 } else if (strpos(strtolower($message), '/circolare_') !== false) {
@@ -239,7 +272,8 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
             sendDocument($chat_id, $row['allegato'], $row['titolo']);
         }
     }
-} else if (strpos(strtolower($message), 'circolare') !== false) {
+    updateLastCommand($chat_id, NULL);
+} else if (strpos(strtolower($message), 'circolare') !== false && (strpos($last_command, '/circolari') !== false)) {
     $tmp = explode(" ", $message);
     if (count($tmp) > 1) {
         $numero = intval($tmp[1]);
@@ -287,7 +321,9 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
             }
         }
     } else errCircolari($chat_id);
-} else if (strpos(strtolower($message), 'circolari') !== false) {
+
+     updateLastCommand($chat_id, NULL);
+} else if (strpos(strtolower($message), 'circolari') !== false && (strpos($last_command, '/circolari') !== false)) {
     $tmp = explode(" ", strtolower($message));
     if ($tmp[1] == "di") {
         if ($tmp[2] == "ieri") {
@@ -340,9 +376,17 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
             }
         }
     } else errCircolari($chat_id);
+    updateLastCommand($chat_id, NULL);
 } else if ($message == "/help" || $message == "/help@itismarconijesibot") {
     $message = "Se hai bisogno di informazioni o vuoi fare delle richieste puoi contattare @simoneluconi";
     sendMessage($chat_id, $message);
+    updateLastCommand($chat_id, NULL);
+
+} else if ($message == "/cancella" || $message == "/cancella@itismarconijesibot") {
+    if ($last_command) {
+        remove_keyboard($chat_id, "Ultimo comando cancellato \xF0\x9F\x98\x89");
+        updateLastCommand($chat_id, NULL);
+    } else sendMessage($chat_id, "Nessun comando da cancellare \xF0\x9F\x98\x85");
 } else if (strlen($message) == 0) {
     $result = mysql_query("SELECT * FROM db_bot_telegram_itis");
     $utenti = array();
@@ -481,7 +525,11 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
             }
         }
     }
-} else sendMessage($chat_id, "Mi dispiace, <b>$message</b> non è un comando valido.");
+} else 
+{ 
+    sendMessage($chat_id, "Mi dispiace, <b>$message</b> non è un comando valido.");
+    updateLastCommand($chat_id, NULL);
+}
 ?>
 </div>
 </body>
