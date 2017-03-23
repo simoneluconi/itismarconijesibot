@@ -29,8 +29,7 @@
             define("ITIS_URL", "http://www.itismarconi-jesi.gov.it");
             define("HOST_URL", "http://simoneluconi.altervista.org");
             date_default_timezone_set('Europe/Rome');
-            define("message_circolari", "Puoi cercare circolari scrivendo ad esempio <b>\"Circolare 220\"</b>,
-            <b>\"Circolare sciopero\"</b>, <b>\"Circolari di ieri\"</b>, <b>\"Circolari di oggi\"</b> o <b>\"Circolari del 4/03/17\"</b>.");
+            define("message_circolari", "Puoi cercare circolari scrivendo ad esempio <b>\"Circolare 220\"</b>, <b>\"Circolare sciopero\"</b>, <b>\"Circolari di ieri\"</b>, <b>\"Circolari di oggi\"</b> o <b>\"Circolari del 4/03/17\"</b>.");
             function Download_Html($url) {
                 $useragent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.1) Gecko/20061204 Firefox/2.0.0.1";
                 $curl = curl_init();
@@ -255,25 +254,6 @@
                 sendDocument($chat_id, ITIS_URL . "/images/stories/orario/online/itismarconi-jesi_orario_potenziamento_febbraio-marzo_2017.pdf", "Orario Recupero/Potenziamento");
                 remove_keyboard($chat_id, "\xF0\x9F\x93\x86 Aggiornato al: 3/3/2017");
                 updateLastCommand($chat_id, NULL);
-            } else if ($message == "/ore" || $message == "/ore@itismarconijesibot") {
-                $reply = "<b>Suddivisione oraria dei giorni</b>\n";
-                $reply.= "\xF0\x9F\x93\x85 <b>Lunedì - Mercoledì - Venerdì</b>\n";
-                $reply.= "\xF0\x9F\x95\x97 <b>1° Ora</b>: 08.00 - 09.00\n";
-                $reply.= "\xF0\x9F\x95\x98 <b>2° Ora</b>: 09.00 - 10.00\n";
-                $reply.= "\xF0\x9F\x95\x99 <b>Intervallo</b>: 10.00 - 10.15\n";
-                $reply.= "\xF0\x9F\x95\x99 <b>3° Ora</b>: 10.15 - 11.15\n";
-                $reply.= "\xF0\x9F\x95\x9A <b>4° Ora</b>: 11.15 - 12.15\n";
-                $reply.= "\xF0\x9F\x95\x9B <b>5° Ora</b>: 12.15 - 13.15\n";
-                $reply.= "\n";
-                $reply.= "\xF0\x9F\x93\x85 <b>Martedì - Giovedì - Sabato</b>\n";
-                $reply.= "\xF0\x9F\x95\x97 <b>1° Ora</b>: 08.00 - 08.50\n";
-                $reply.= "\xF0\x9F\x95\x98 <b>2° Ora</b>: 08.50 - 9.40\n";
-                $reply.= "\xF0\x9F\x95\x99 <b>3° Ora</b>: 9.40 - 10.30\n";
-                $reply.= "\xF0\x9F\x95\x99 <b>Intervallo</b>: 10.30 - 10.45\n";
-                $reply.= "\xF0\x9F\x95\x9A <b>4° Ora</b>: 10.45 - 11.35\n";
-                $reply.= "\xF0\x9F\x95\x9B <b>5° Ora</b>: 11.35 - 12.25\n";
-                $reply.= "\xF0\x9F\x95\x90 <b>6° Ora</b>: 12.25 - 13.15";
-                sendMessage($chat_id, $reply);
             } else if ($message == "/calendario" || $message == "/calendario@itismarconijesibot") {
                 $reply = "<b>Calendario Scolastico 2016-2019</b>\n";
                 $reply.= "\xF0\x9F\x93\x85 Inizio lezioni: <b>Giovedì 15 Settembre 2016</b>\n";
@@ -300,7 +280,7 @@
             } else if ($message == "/id" || $message == "/id@itismarconijesibot" ) {
                 sendMessage($chat_id, "Il tuo chat id è: " . $chat_id);
                 updateLastCommand($chat_id, NULL);
-            } else if ($message == "/opensuorce") {
+            } else if ($message == "/info" || $message == "/info@itismarconijesibot" ) {
                 sendMessage($chat_id, "Questo bot è opensuorce \xF0\x9F\x8E\x86 Puoi visualizzare il sorgente su <a href='https://github.com/simoneluconi/itismarconijesibot/'>github</a> e contribuire al suo sviluppo. In alternativa puoi contattarmi a @simoneluconi.");
                 updateLastCommand($chat_id, NULL);
             } else if ($message == "/circolari" || $message == "/circolari@itismarconijesibot") {
@@ -424,11 +404,6 @@
                     }
                 } else errCircolari($chat_id);
                 updateLastCommand($chat_id, NULL);
-            } else if ($message == "/help" || $message == "/help@itismarconijesibot") {
-                $message = "Se hai bisogno di informazioni o vuoi fare delle richieste puoi contattare @simoneluconi";
-                sendMessage($chat_id, $message);
-                updateLastCommand($chat_id, NULL);
-            
             } else if ($message == "/cancella" || $message == "/cancella@itismarconijesibot") {
                 if ($last_command) {
                     remove_keyboard($chat_id, "Ultimo comando cancellato \xF0\x9F\x98\x89");
