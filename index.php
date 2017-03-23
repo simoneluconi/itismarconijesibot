@@ -187,7 +187,7 @@ if ($message == "/start" || $message == "/start@itismarconijesibot") {
 
     sendKeyboard($chat_id, "Seleziona una classe", $array);
 
-} else if (strpos($message, 'Classe') !== false) {
+} else if (strpos($message, 'Classe') !== false && (strpos($last_command, 'Studenti') !== false)) {
     $tmp = explode(" ", $message);
     $url = "/files/orario/orario.php";
     $response = json_decode(file_get_contents(HOST_URL."/telegram/itisbot/orario.php?classe=".$tmp[1]));
