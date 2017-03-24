@@ -7,8 +7,8 @@
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
       <!-- Compiled and minified JavaScript -->
       <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
-      <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-      <link rel="icon" href="/favicon.ico" type="image/x-icon">
+      <link rel="shortcut icon" href="/files/favicon.ico" type="image/x-icon">
+      <link rel="icon" href="/files/favicon.ico" type="image/x-icon">
    </head>
    <body>
       <nav class="light-blue lighten-1" role="navigation">
