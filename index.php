@@ -204,11 +204,6 @@
                     else sendMessage($chat_id, "Ops...c'è stato un problema nell'avviare il bot \xF0\x9F\x98\x94");
                 } else sendMessage($chat_id, "Sei già stato aggiunto \xF0\x9F\x98\x89");
                  updateLastCommand($chat_id, NULL);
-            } else if ($message == "/stop" || $message == "/stop@itismarconijesibot") {
-                sendChatAction($chat_id, TYPING);
-                mysql_query("DELETE FROM db_bot_telegram_itis where chat_id='$chat_id'", $link);
-                sendMessage($chat_id, "Mi dispiace vederti andar via \xF0\x9F\x98\xA2");
-                updateLastCommand($chat_id, NULL);
             } else if ($message == "/orario" || $message == "/orario@itismarconijesibot") {
                 sendChatAction($chat_id, TYPING);
                 $array = array(array("Studenti"), array("Docenti"), array("Laboratori"), array("Recupero/Potenziamento"));
@@ -503,6 +498,7 @@
                 }
             
                 echo "</table>\n";
+
                 $circolari = array_reverse($circolari);
                 foreach ($utenti as & $utente) {
                     foreach ($circolari as & $circolare) {
