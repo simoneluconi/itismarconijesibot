@@ -23,6 +23,7 @@
       <div class="container">
          <?php
             include 'simple_html_dom.php';
+            include 'addCal.php';
             define("Token", "342594609:AAFKHHMTxwsqqVwf5kHmOeRb3BZcslSrOBk");
             define("Google_Api_Key", "AIzaSyDSgH3wS8BceILLAq6I1c8pgOuoEaf09Mg");
             define("Telegram", "https://api.telegram.org/bot" . Token);
@@ -558,7 +559,9 @@
                             $message.= "\xE2\x9C\x8F $testo \n";
                             if (!is_null($comando_circolare)) $message.= "\xF0\x9F\x93\x8E	Circolare allegata: $comando_circolare\n";
                             $evento_link = $evento['link'];
-                            $message.= "\xF0\x9F\x94\x97 <a href='$evento_link'>Link all'evento</a>";
+                            $message.= "\xF0\x9F\x94\x97 <a href='$evento_link'>Link all'evento</a>\n";
+                            $add_evento = squarecandy_add_to_gcal($testo, $data_inizio.' '.$ora);
+                            $message.= "\xF0\x9F\x93\x8C <a href='$add_evento'>Aggiungi al calendario</a>";
                             $testo = mysql_real_escape_string($testo);
                             $result = mysql_query("INSERT INTO db_eventi (evento, data_inizio, ora, link, circolare_allegata) VALUES ('$testo', '$data_inizio', '$ora', '$evento_link', $numero_circolare)");
                             foreach ($utenti as & $utente) {
@@ -570,7 +573,9 @@
                             $message.= "\xE2\x9C\x8F $testo \n";
                             if (!is_null($comando_circolare)) $message.= "\xF0\x9F\x93\x8E	Circolare allegata: $comando_circolare\n";
                             $evento_link = $evento['link'];
-                            $message.= "\xF0\x9F\x94\x97 <a href='$evento_link'>Link all'evento</a>";
+                            $message.= "\xF0\x9F\x94\x97 <a href='$evento_link'>Link all'evento</a>\n";
+                            $add_evento = squarecandy_add_to_gcal($testo, $data_inizio, $data_fine);
+                            $message.= "\xF0\x9F\x93\x8C <a href='$add_evento'>Aggiungi al calendario</a>";
                             $result = mysql_query("INSERT INTO db_eventi (evento, data_inizio, data_fine, link, circolare_allegata) VALUES ('$testo', '$data_inizio', '$data_fine', '$evento_link', $numero_circolare)");
                             foreach ($utenti as & $utente) {
                                 sendMessage($utente['chat_id'], $message);
