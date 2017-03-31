@@ -265,8 +265,8 @@
             }
              else if ($message == "Recupero/Potenziamento" && (strpos($last_command, '/orario') !== false)) {
                 sendChatAction($chat_id, UPLOAD_DOCUMENT);
-                sendDocument($chat_id, ITIS_URL . "/images/stories/orario/online/itismarconi-jesi_orario_potenziamento_febbraio-marzo_2017.pdf", "Orario Recupero/Potenziamento");
-                remove_keyboard($chat_id, "\xF0\x9F\x93\x86 Aggiornato al: 3/3/2017");
+                sendDocument($chat_id, ITIS_URL . "/images/stories/orario/online/itismarconi-jesi_orario_potenziamento_aprile-maggio-giugno-2017.pdf", "Orario Recupero/Potenziamento");
+                remove_keyboard($chat_id, "\xF0\x9F\x93\x86 Aggiornato al: 31/3/2017");
                 updateLastCommand($chat_id, NULL);
             } else if ($message == "/calendario" || $message == "/calendario@itismarconijesibot") {
                 sendChatAction($chat_id, TYPING);
@@ -506,7 +506,7 @@
                         sendDocument($utente['chat_id'], $circolare['allegato'], $circolare['title']);
                     }
                 }
-                
+                                
                 echo "<br><br>\n";
                 echo "<table class=\"centered\"> <thead> <tr> <th>Evento</th> <th>Data</th> </tr> </thead>\n";
                 $table = $dom->getElementsByTagName('table')->item(1); //Eventi
