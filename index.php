@@ -66,7 +66,7 @@
             function remove_keyboard($chat_id, $message) {
                 $resp = array("remove_keyboard" => true);
                 $reply = json_encode($resp);
-                file_get_contents(Telegram . "/sendMessage?chat_id=$chat_id&text=" . urlencode($message) . "&reply_markup=" . urlencode($reply));
+                file_get_contents(Telegram . "/sendMessage?chat_id=$chat_id&text=" . urlencode($message) . "&reply_markup=" . urlencode($reply) . "&parse_mode=HTML");
             }
             function sendKeyboard($chat_id, $message, $keyboard) {
                 $resp = array("keyboard" => $keyboard, "resize_keyboard" => true, "one_time_keyboard" => true);
@@ -436,7 +436,7 @@
                 } else sendMessage($chat_id, "Nessun comando da cancellare \xF0\x9F\x98\x85");
             } else 
             { 
-                sendMessage($chat_id, "Mi dispiace, <b>$message</b> non è un comando valido.");
+                remove_keyboard($chat_id, "Mi dispiace, <b>$message</b> non è un comando valido.");
                 updateLastCommand($chat_id, NULL);
             }
 
