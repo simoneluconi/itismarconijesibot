@@ -333,6 +333,7 @@
                             while ($row = mysql_fetch_assoc($result)) {
                                 sendDocument($chat_id, $row['allegato'], $row['titolo']);
                             }
+                                updateLastCommand($chat_id, NULL);
                         } else {
                             $result = mysql_query("SELECT * FROM db_circolari");
                             if (mysql_num_rows($result) > 0) sendChatAction($chat_id, UPLOAD_DOCUMENT);
@@ -367,10 +368,12 @@
                                 sendDocument($chat_id, $row['allegato'], $row['titolo']);
                             }
                         }
+                            updateLastCommand($chat_id, NULL);
                     }
-                } else errCircolari($chat_id);
-            
-                 updateLastCommand($chat_id, NULL);
+                } else {
+                    errCircolari($chat_id);
+                    updateLastCommand($chat_id, NULL);
+                }
             } else if (strpos(strtolower($message), 'circolari') !== false && (strpos($last_command, '/circolari') !== false)) {
                 sendChatAction($chat_id, TYPING);
                 $tmp = explode(" ", strtolower($message));
