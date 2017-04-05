@@ -24,6 +24,7 @@
          <?php
             include 'simple_html_dom.php';
             include 'addCal.php';
+            include 'random.php';
             define("Token", "342594609:AAFKHHMTxwsqqVwf5kHmOeRb3BZcslSrOBk");
             define("Google_Api_Key", "AIzaSyDSgH3wS8BceILLAq6I1c8pgOuoEaf09Mg");
             define("Telegram", "https://api.telegram.org/bot" . Token);
@@ -317,7 +318,23 @@
                     }
                 }
                 updateLastCommand($chat_id, NULL);
-            } else if ((strpos(strtolower($message), 'circolare') !== false ) && (strpos($last_command, '/circolari') !== false)) {
+            } else if (strpos(strtolower($message), '/allegato_') !== false) {
+                sendChatAction($chat_id, UPLOAD_DOCUMENT);
+                $cerca = str_replace("@itismarconijesibot", "", $message);
+                $cerca = str_replace("/allegato_", "", $message);
+                $cerca = mysql_real_escape_string($cerca);
+                $result = mysql_query("SELECT * FROM db_allegati WHERE id='$cerca'");
+                $num_rows = mysql_num_rows($result);
+                if ($num_rows == 0) {
+                    sendMessage($chat_id, "Mi dispiace, non ho trovato nessuna allegato con questo ID \xF0\x9F\x98\x94");
+                } else {
+                    while ($row = mysql_fetch_assoc($result)) {
+                        sendDocument($chat_id, $row['allegato'], $row['titolo']);
+                    }
+                }
+                updateLastCommand($chat_id, NULL);
+            }          
+            else if ((strpos(strtolower($message), 'circolare') !== false ) && (strpos($last_command, '/circolari') !== false)) {
                 sendChatAction($chat_id, TYPING);
                 $tmp = explode(" ", $message);
                 if (count($tmp) > 1) {
@@ -493,7 +510,26 @@
                                 if (!is_null($allegato)) {
                                     $allegato = $allegato->getattribute('href');
                                     $result = mysql_query("INSERT INTO db_circolari (titolo, data, allegato) VALUES ('$title_esc', '$data', '$allegato')");
-                                    $circolare = array("title" => $title, "allegato" => $allegato);
+                                    if ($table->getElementsByTagName('tr')->length == 1) {
+                                        $circolare = array("title" => $title, "allegato" => $allegato);
+                                    } else{
+                                        
+                                        $allegati = array();
+                                        for ($i = 1; $i < $table->getElementsByTagName('tr')->length; $i++)
+                                        {
+                                            $tmpAllegatoOgg = $table->getElementsByTagName('tr')->item($i);
+                                            $tmpDatiAllegato = $tmpAllegatoOgg->getElementsByTagName('td')->item(0);
+                                            $tmpDatiAllegato2= $tmpDatiAllegato->getElementsByTagName('a')->item(1);
+                                            $AllegatoTitolo = $tmpDatiAllegato2->nodeValue;
+                                            $AllegatoLink = $tmpDatiAllegato2->getattribute('href');
+                                            $AllegatoId = generateRandomString();
+                                            $allegato2 = array("title" => $AllegatoTitolo, "allegato" => $AllegatoLink, "id" => $AllegatoId);
+                                            $result = mysql_query("INSERT INTO db_allegati (titolo, allegato, id, circolare) VALUES ('$AllegatoTitolo', '$AllegatoLink', '$AllegatoId' , '$title_esc')");
+                                            $allegati[] = $allegato2;
+                                        }
+
+                                        $circolare = array("title" => $title, "allegato" => $allegato, "allegati" => $allegati);
+                                    }
                                     $circolari[] = $circolare;
                                 }
                             }
@@ -504,11 +540,23 @@
                 echo "</table>\n";
 
                 $circolari = array_reverse($circolari);
+
                 foreach ($utenti as & $utente) {
-                    foreach ($circolari as & $circolare) {
+                    foreach ($circolari as $circolare) {
                         sendDocument($utente['chat_id'], $circolare['allegato'], $circolare['title']);
+
+                        if ($circolare['allegati'])
+                        {
+                            $message_allegati = "\xE2\x9D\x97 <b>Attenzione!</b> Nella precedente circolare sono presenti altri allegati";
+                            foreach ($circolare['allegati'] as &$allegato) {
+                                $message_allegati .= "\n• ".$allegato['title'].": /allegato_".$allegato['id'];
+                            }
+                            sendMessage($utente['chat_id'], $message_allegati);
+                        }
                     }
+
                 }
+                
                                 
                 echo "<br><br>\n";
                 echo "<table class=\"centered\"> <thead> <tr> <th>Evento</th> <th>Data</th> </tr> </thead>\n";
