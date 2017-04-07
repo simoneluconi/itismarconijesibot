@@ -564,20 +564,22 @@
                 $rows = $table->getElementsByTagName('tr');
                 $eventi = array();
                 foreach ($rows as $row) {
-                    $data_inizio = $row->getElementsByTagName('span')->item(0)->nodeValue;
-                    $data_fine_ora = $row->getElementsByTagName('span')->item(1)->nodeValue;
-                    $testo = $row->getElementsByTagName('span')->item(2)->nodeValue;
-                    $link_evento = $row->getElementsByTagName('span')->item(2)->getElementsByTagName('a')->item(0)->getattribute('onclick');
-                    $link_evento = getLinkEvento($link_evento);
-                    echo "<tbody><tr> <td> <a href='$link_evento' target=\"_blank\">$testo </a></td> <td> $data_inizio - $data_fine_ora </td> </tr> </tbody>\n";
-                    $tag_array;
-                    if (strpos($data_fine_ora, ':') !== false) {
-                        $tag_array = "ora";
-                    } else {
-                        $tag_array = "data_fine";
+                    if ($row->nodeValue != "Nessun evento") {
+                        $data_inizio = $row->getElementsByTagName('span')->item(0)->nodeValue;
+                        $data_fine_ora = $row->getElementsByTagName('span')->item(1)->nodeValue;
+                        $testo = $row->getElementsByTagName('span')->item(2)->nodeValue;
+                        $link_evento = $row->getElementsByTagName('span')->item(2)->getElementsByTagName('a')->item(0)->getattribute('onclick');
+                        $link_evento = getLinkEvento($link_evento);
+                        echo "<tbody><tr> <td> <a href='$link_evento' target=\"_blank\">$testo </a></td> <td> $data_inizio - $data_fine_ora </td> </tr> </tbody>\n";
+                        $tag_array;
+                        if (strpos($data_fine_ora, ':') !== false) {
+                            $tag_array = "ora";
+                        } else {
+                            $tag_array = "data_fine";
+                        }
+                        $evento = array("data_inizio" => $data_inizio, $tag_array => $data_fine_ora, "testo" => $testo, "link" => $link_evento);
+                        $eventi[] = $evento;
                     }
-                    $evento = array("data_inizio" => $data_inizio, $tag_array => $data_fine_ora, "testo" => $testo, "link" => $link_evento);
-                    $eventi[] = $evento;
                 }
                 echo "</table>\n";
                 $eventi = array_reverse($eventi);
