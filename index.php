@@ -72,8 +72,15 @@
             function sendKeyboard($chat_id, $message, $keyboard) {
                 $resp = array("keyboard" => $keyboard, "resize_keyboard" => true, "one_time_keyboard" => true);
                 $reply = json_encode($resp);
-                file_get_contents(Telegram . "/sendMessage?chat_id=$chat_id&text=" . urlencode($message) . "&reply_markup=" . urlencode($reply));
+                file_get_contents(Telegram . "/sendMessage?chat_id=$chat_id&text=" . urlencode($message) . "&reply_markup=" . urlencode($reply) . "&parse_mode=HTML");
             }
+
+            function sendInlineKeyboard($chat_id, $message, $keyboard) {
+                $resp = array("inline_keyboard" => array($keyboard));
+                $reply = json_encode($resp);
+                file_get_contents(Telegram . "/sendMessage?chat_id=$chat_id&text=" . urlencode($message) . "&reply_markup=".urlencode($reply) . "&parse_mode=HTML");
+            }
+
             function errCircolari($chat_id) {
                 sendMessage($chat_id, "\xE2\x9D\x97 Formato del messaggio non valido!");
                 sendMessage($chat_id, message_circolari);
@@ -582,6 +589,7 @@
                     }
                 }
                 echo "</table>\n";
+
                 $eventi = array_reverse($eventi);
                 foreach ($eventi as & $evento) {
                     $data_inizio = $evento['data_inizio'];
@@ -611,28 +619,32 @@
                             $message.= "\xF0\x9F\x95\x90 <b> $ora </b>\n";
                             $message.= "\xE2\x9C\x8F $testo \n";
                             if (!is_null($comando_circolare)) $message.= "\xF0\x9F\x93\x8E	Circolare allegata: $comando_circolare\n";
-                            $evento_link = $evento['link'];
-                            $message.= "\xF0\x9F\x94\x97 <a href='$evento_link'>Link all'evento</a>\n";
-                            $add_evento = squarecandy_add_to_gcal($testo, $data_inizio.' '.$ora);
-                            $message.= "\xF0\x9F\x93\x8C <a href='$add_evento'>Aggiungi al calendario</a>";
                             $testo = mysql_real_escape_string($testo);
                             $result = mysql_query("INSERT INTO db_eventi (evento, data_inizio, ora, link, circolare_allegata) VALUES ('$testo', '$data_inizio', '$ora', '$evento_link', $numero_circolare)");
+
+                            $evento_link = $evento['link'];
+                            $add_evento = squarecandy_add_to_gcal($testo, $data_inizio.' '.$ora);
+                            $keyboard = array(array("text" => "\xF0\x9F\x8C\x8D Guarda nel sito", "url" => $evento_link),array("text"=> "\xF0\x9F\x93\x8C Aggiungi al calendario", "url"  => $add_evento));
+
                             foreach ($utenti as & $utente) {
-                                sendMessage($utente['chat_id'], $message);
+                                sendInlineKeyboard($utente['chat_id'], $message, $keyboard);
                             }
+
                         } else {
                             $data_fine = $evento['data_fine'];
                             $message = "\xF0\x9F\x93\x86 <b>" . $data_inizio . " - " . $data_fine . "</b>\n";
                             $message.= "\xE2\x9C\x8F $testo \n";
                             if (!is_null($comando_circolare)) $message.= "\xF0\x9F\x93\x8E	Circolare allegata: $comando_circolare\n";
-                            $evento_link = $evento['link'];
-                            $message.= "\xF0\x9F\x94\x97 <a href='$evento_link'>Link all'evento</a>\n";
-                            $add_evento = squarecandy_add_to_gcal($testo, $data_inizio, $data_fine);
-                            $message.= "\xF0\x9F\x93\x8C <a href='$add_evento'>Aggiungi al calendario</a>";
                             $result = mysql_query("INSERT INTO db_eventi (evento, data_inizio, data_fine, link, circolare_allegata) VALUES ('$testo', '$data_inizio', '$data_fine', '$evento_link', $numero_circolare)");
+                            
+                            $evento_link = $evento['link'];
+                            $add_evento = squarecandy_add_to_gcal($testo, $data_inizio, $data_fine);
+                            $keyboard = array(array("text" => "\xF0\x9F\x8C\x8D Guarda nel sito", "url" => $evento_link),array("text"=> "\xF0\x9F\x93\x8C Aggiungi al calendario", "url"  => $add_evento));
+
                             foreach ($utenti as & $utente) {
-                                sendMessage($utente['chat_id'], $message);
+                                sendInlineKeyboard($utente['chat_id'], $message, $keyboard);
                             }
+
                         }
                     }
                 }
