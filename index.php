@@ -300,6 +300,7 @@
                 $reply.= "\xF0\x9F\x8E\x84 <b>Vacanze di Natale</b>: dal 24 Dicembre 2016 al 5 Gennaio 2017\n";
                 $reply.= "\xF0\x9F\x90\xB0 <b>Vacanze di Pasqua</b>: dal 13 Aprile 2017 al 18 Aprile 2017\n";
                 sendMessage($chat_id, $reply);
+                updateLastCommand($chat_id, NULL);
             } else if ($message == "/id" || $message == "/id@itismarconijesibot" ) {
                 sendMessage($chat_id, "Il tuo chat id è: " . $chat_id);
                 updateLastCommand($chat_id, NULL);
