@@ -35,7 +35,7 @@
             define("UPLOAD_DOCUMENT", "upload_document");
 
             date_default_timezone_set('Europe/Rome');
-            define("message_circolari", "Puoi cercare circolari scrivendo ad esempio <b>\"Circolare 220\"</b>, <b>\"Circolare sciopero\"</b>, <b>\"Circolari di ieri\"</b>, <b>\"Circolari di oggi\"</b> o <b>\"Circolari del 4/03/17\"</b>.");
+            define("message_circolari", "\xF0\x9F\x94\x8D Puoi cercare circolari scrivendo ad esempio <b>\"Circolare 220\"</b>, <b>\"Circolare sciopero\"</b>, <b>\"Circolari di ieri\"</b>, <b>\"Circolari di oggi\"</b> o <b>\"Circolari del 4/03/17\"</b>.");
             function Download_Html($url) {
                 $useragent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.1) Gecko/20061204 Firefox/2.0.0.1";
                 $curl = curl_init();
@@ -175,9 +175,9 @@
                 $url = "/files/orario/orario.php";
                 $response = json_decode(file_get_contents(HOST_URL."/telegram/itisbot/orario.php?classe=".$tmp[1]));
                 if ($response->link) {
-                    remove_keyboard($chat_id, "Ti invio l'orario della classe ". $tmp[1]);
+                    remove_keyboard($chat_id, "\xF0\x9F\x93\xA9 Ti invio l'orario della <b>classe ". $tmp[1]."</b>");
                     sendPhoto($chat_id, $response->link);
-                } else remove_keyboard($chat_id, "Mi dispiace, non ho trovato l'orario della classe ". $tmp[1]);
+                } else remove_keyboard($chat_id, "Mi dispiace, non ho trovato l'orario della <b>classe ". $tmp[1])."</b> \xF0\x9F\x98\x94";
                 updateLastCommand($chat_id, NULL);
                 } else if (strpos($last_command, 'Laboratori') !== false)
                 {
@@ -186,9 +186,9 @@
                     $url = "/files/orario/orario.php";
                     $response = json_decode(file_get_contents(HOST_URL."/telegram/itisbot/orario.php?laboratorio=".$tmp));
                 if ($response->link) {
-                    remove_keyboard($chat_id, "Ti invio l'orario del ". $message);
+                    remove_keyboard($chat_id, "\xF0\x9F\x93\xA9	Ti invio l'orario del <b>$message</b>");
                     sendPhoto($chat_id, $response->link);
-                } else remove_keyboard($chat_id, "Mi dispiace, non ho trovato l'orario del ". $message);
+                } else remove_keyboard($chat_id, "Mi dispiace, non ho trovato l'orario del <b>$message</b> \xF0\x9F\x98\x94");
                     updateLastCommand($chat_id, NULL);                
                 } else if (strpos($last_command, 'Docenti') !== false)
                 {
@@ -198,9 +198,9 @@
                     $response = json_decode(file_get_contents(HOST_URL."/telegram/itisbot/orario.php?docente=".$tmp));
                 if ($response->link) {
                     sendChatAction($chat_id, UPLOAD_PHOTO);
-                    remove_keyboard($chat_id, "Ti invio l'orario del docente ". $message);
+                    remove_keyboard($chat_id, "\xF0\x9F\x93\xA9	Ti invio l'orario del docente <b>$message</b>");
                     sendPhoto($chat_id, $response->link);
-                } else remove_keyboard($chat_id, "Mi dispiace, non ho trovato l'orario del docente". $message);
+                } else remove_keyboard($chat_id, "Mi dispiace, non ho trovato l'orario del docente <b>$message</b> \xF0\x9F\x98\x94");
                     updateLastCommand($chat_id, NULL);
                 } 
                 else if ($message == "/start" || $message == "/start@itismarconijesibot") {
@@ -216,7 +216,7 @@
             } else if ($message == "/orario" || $message == "/orario@itismarconijesibot") {
                 sendChatAction($chat_id, TYPING);
                 $array = array(array("Studenti"), array("Docenti"), array("Laboratori"), array("Recupero/Potenziamento"));
-                sendKeyboard($chat_id, "Seleziona un orario: ", $array);
+                sendKeyboard($chat_id, "\xF0\x9F\x95\x90 Seleziona un orario: ", $array);
             } else if ($message == "Studenti" && (strpos($last_command, '/orario') !== false)) {
                 sendChatAction($chat_id, TYPING);
                 $url = "/files/orario/orario.php";
@@ -234,7 +234,7 @@
                     }
                 }
             
-                sendKeyboard($chat_id, "Seleziona una classe", $array);
+                sendKeyboard($chat_id, "\xF0\x9F\x93\x9A Seleziona una classe", $array);
             
             }  else if ($message == "Laboratori" && (strpos($last_command, '/orario') !== false)) {
                 sendChatAction($chat_id, TYPING);
@@ -252,7 +252,7 @@
                         $count = 0;
                     }
                 }
-                sendKeyboard($chat_id, "Seleziona un laboratorio", $array);
+                sendKeyboard($chat_id, "\xF0\x9F\x9A\xAA Seleziona un laboratorio", $array);
             }  else if ($message == "Docenti" && (strpos($last_command, '/orario') !== false)) {
                 sendChatAction($chat_id, TYPING);
                 $url = "/files/orario/orario.php";
@@ -269,7 +269,7 @@
                         $count = 0;
                     }
                 }
-                sendKeyboard($chat_id, "Seleziona un docente", $array);
+                sendKeyboard($chat_id, "\xF0\x9F\x8E\x93 Seleziona un docente", $array);
             }
              else if ($message == "Recupero/Potenziamento" && (strpos($last_command, '/orario') !== false)) {
                 sendChatAction($chat_id, UPLOAD_DOCUMENT);
@@ -358,7 +358,7 @@
                         $result = mysql_query("SELECT * FROM db_circolari WHERE titolo LIKE '$message_escaped%'");
                         if (mysql_num_rows($result) > 0) {
                             sendChatAction($chat_id, UPLOAD_DOCUMENT);
-                            remove_keyboard($chat_id, "Invio circolare:");
+                            remove_keyboard($chat_id, "\xF0\x9F\x93\xA9	Ti invio la circolare:");
                             while ($row = mysql_fetch_assoc($result)) {
                                 sendDocument($chat_id, $row['allegato'], $row['titolo']);
                             }
@@ -378,8 +378,8 @@
                             if (count($circolari_keyboard) == 0) sendMessage($chat_id, "Non ho trovato nessuna circolare con nome $cerca \xF0\x9F\x98\x94");
                             else {
                                 $n_circolari = count($circolari_keyboard);
-                                if ($n_circolari == 1) sendKeyboard($chat_id, "Ho trovato una circolare: ", $circolari_keyboard);
-                                else sendKeyboard($chat_id, "Ho trovato $n_circolari circolari: ", $circolari_keyboard);
+                                if ($n_circolari == 1) sendKeyboard($chat_id, "\xF0\x9F\x93\x91	Ho trovato una circolare: ", $circolari_keyboard);
+                                else sendKeyboard($chat_id, "\xF0\x9F\x93\x91 Ho trovato $n_circolari circolari: ", $circolari_keyboard);
                             }
                         }
                     } else {
@@ -391,8 +391,8 @@
                             sendMessage($chat_id, "Mi dispiace, non ho trovato nessuna circolare numero $numero \xF0\x9F\x98\x94");
                         } else {
                             sendChatAction($chat_id, UPLOAD_DOCUMENT);
-                            if ($num_rows == 1) sendMessage($chat_id, "Ho trovato questa circolare:");
-                            else sendMessage($chat_id, "Ho trovato queste circolari:");
+                            if ($num_rows == 1) sendMessage($chat_id, "\xF0\x9F\x93\x91	Ho trovato questa circolare:");
+                            else sendMessage($chat_id, "\xF0\x9F\x93\x91 Ho trovato queste circolari:");
                             while ($row = mysql_fetch_assoc($result)) {
                                 sendDocument($chat_id, $row['allegato'], $row['titolo']);
                             }
@@ -419,8 +419,8 @@
                         if (count($circolari_keyboard) == 0) sendMessage($chat_id, "Ieri non è uscita nessuna circolare \xF0\x9F\x98\x94");
                         else {
                             $n_circolari = count($circolari_keyboard);
-                            if ($n_circolari == 1) sendKeyboard($chat_id, "Ho trovato una circolare: ", $circolari_keyboard);
-                            else sendKeyboard($chat_id, "Ho trovato $n_circolari circolari: ", $circolari_keyboard);
+                            if ($n_circolari == 1) sendKeyboard($chat_id, "\xF0\x9F\x93\x91	Ho trovato una circolare: ", $circolari_keyboard);
+                            else sendKeyboard($chat_id, "\xF0\x9F\x93\x91 Ho trovato $n_circolari circolari: ", $circolari_keyboard);
                         }
                     } else if ($tmp[2] == "oggi") {
                         $oggi = new DateTime();
@@ -433,8 +433,8 @@
                         if (count($circolari_keyboard) == 0) sendMessage($chat_id, "Oggi non è uscita nessuna circolare \xF0\x9F\x98\x94");
                         else {
                             $n_circolari = count($circolari_keyboard);
-                            if ($n_circolari == 1) sendKeyboard($chat_id, "Ho trovato una circolare: ", $circolari_keyboard);
-                            else sendKeyboard($chat_id, "Ho trovato $n_circolari circolari: ", $circolari_keyboard);
+                            if ($n_circolari == 1) sendKeyboard($chat_id, "\xF0\x9F\x93\x91	Ho trovato una circolare: ", $circolari_keyboard);
+                            else sendKeyboard($chat_id, "\xF0\x9F\x93\x91 Ho trovato $n_circolari circolari: ", $circolari_keyboard);
                         }
                     } else errCircolari($chat_id);
                 } else if ($tmp[1] == "del") {
@@ -452,8 +452,8 @@
                         if (count($circolari_keyboard) == 0) sendMessage($chat_id, "Non c'è nessuna circolare in data $date_circolare_format \xF0\x9F\x98\x94");
                         else {
                             $n_circolari = count($circolari_keyboard);
-                            if ($n_circolari == 1) sendKeyboard($chat_id, "Ho trovato una circolare: ", $circolari_keyboard);
-                            else sendKeyboard($chat_id, "Ho trovato $n_circolari circolari: ", $circolari_keyboard);
+                            if ($n_circolari == 1) sendKeyboard($chat_id, "\xF0\x9F\x93\x91	Ho trovato una circolare: ", $circolari_keyboard);
+                            else sendKeyboard($chat_id, "\xF0\x9F\x93\x91 Ho trovato $n_circolari circolari: ", $circolari_keyboard);
                         }
                     }
                 } else 
