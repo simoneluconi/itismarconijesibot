@@ -305,7 +305,7 @@
                 updateLastCommand($chat_id, NULL);
             } else if ($message == "/info" || $message == "/info@itismarconijesibot" ) {
                 $reply = "<b>Cosa può fare questo bot?</b>\n";
-                $reply .= "Questo bot nasce dall'esigenza pratica di tenersi costantemente aggiornati riguardo alle nuove circolari e i nuovi eventi che vengono pubblicati nel sito della scuola (I.T.I.S. G. Marconi di Jesi). Il bot inoltrerà nella chat le nuove circolari uscite e gli eventi presenti nel sito. Sarà inoltre possibile ricercare circolari, visualizzare l'orario di studenti, professori e laboratori ed il calendario scolastico.";
+                $reply .= "Questo bot nasce dall'esigenza pratica di tenersi costantemente aggiornati riguardo alle nuove circolari e i nuovi eventi che vengono pubblicati nel <a href=\"http://www.itismarconi-jesi.gov.it/\">sito della scuola</a> (I.T.I.S. G. Marconi di Jesi). Il bot inoltrerà nella chat le nuove circolari uscite e gli eventi presenti nel sito. Sarà inoltre possibile ricercare circolari, visualizzare l'orario di studenti, professori e laboratori ed il calendario scolastico.";
                 $reply .= "\n\n<b>Contribuisci allo sviluppo</b>\n";
                 $reply .= "Questo bot è opensuorce \xF0\x9F\x8E\x86 Puoi visualizzare il sorgente su <a href='https://github.com/simoneluconi/itismarconijesibot/'>Github</a> e contribuire al suo sviluppo. In alternativa, per propormi dei suggerimenti contattami a @simoneluconi.";
                 sendMessage($chat_id, $reply);
