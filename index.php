@@ -76,7 +76,7 @@
             }
 
             function sendInlineKeyboard($chat_id, $message, $keyboard) {
-                $resp = array("inline_keyboard" => array($keyboard));
+                $resp = array("inline_keyboard" => $keyboard);
                 $reply = json_encode($resp);
                 file_get_contents(Telegram . "/sendMessage?chat_id=$chat_id&text=" . urlencode($message) . "&reply_markup=".urlencode($reply) . "&parse_mode=HTML");
             }
@@ -624,7 +624,7 @@
 
                             $evento_link = $evento['link'];
                             $add_evento = squarecandy_add_to_gcal($testo, $data_inizio.' '.$ora);
-                            $keyboard = array(array("text" => "\xF0\x9F\x8C\x8D Guarda nel sito", "url" => $evento_link),array("text"=> "\xF0\x9F\x93\x8C Aggiungi al calendario", "url"  => $add_evento));
+                            $keyboard = array(array(array("text" => "\xF0\x9F\x8C\x8D Guarda nel sito", "url" => $evento_link)),array(array("text"=> "\xF0\x9F\x93\x8C Aggiungi al calendario", "url"  => $add_evento)));
 
                             foreach ($utenti as & $utente) {
                                 sendInlineKeyboard($utente['chat_id'], $message, $keyboard);
@@ -639,12 +639,11 @@
                             
                             $evento_link = $evento['link'];
                             $add_evento = squarecandy_add_to_gcal($testo, $data_inizio, $data_fine);
-                            $keyboard = array(array("text" => "\xF0\x9F\x8C\x8D Guarda nel sito", "url" => $evento_link),array("text"=> "\xF0\x9F\x93\x8C Aggiungi al calendario", "url"  => $add_evento));
+                            $keyboard = array(array(array("text" => "\xF0\x9F\x8C\x8D Guarda nel sito", "url" => $evento_link)),array(array("text"=> "\xF0\x9F\x93\x8C Aggiungi al calendario", "url"  => $add_evento)));
 
                             foreach ($utenti as & $utente) {
                                 sendInlineKeyboard($utente['chat_id'], $message, $keyboard);
                             }
-
                         }
                     }
                 }
