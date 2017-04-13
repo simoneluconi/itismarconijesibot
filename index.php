@@ -480,13 +480,28 @@
                 }
             
                 $n_users = count($utenti);
+
+                ?>  
+                <div class="row">
+                <div class="col s6">
+                <div class="card-panel">
+                <?php
+                echo "<span class=\"blue-text text-darken-2\">Utenti registrati: <b>$n_users</b>";
+                ?>
+                </span>
+                </div>
+                </div>
             
-                echo "<div class=\"row\">\n";
-                echo "<div class=\"col s6\">\n";
-                echo "<div class=\"card-panel\"> <span class=\"blue-text text-darken-2\"> Utenti registrati: <b> $n_users </b> </span> </div>\n";
-                echo "</div>\n";
-            
-                echo "<table class=\"centered\"> <thead> <tr> <th>Circolare</th> <th>Data</th></tr></thead>\n";
+                <table class="centered">
+                <thead>
+                <tr>
+                <th>Circolare</th>
+                <th>Data</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <?php
                 $dom = new DomDocument();
                 $content = Download_Html(ITIS_URL . "/docenti-ata/circolari-e-comunicazioni.html");
                 @$dom->loadHTML($content);
@@ -505,7 +520,7 @@
                         $data = mysql_real_escape_string($data);
                         $link_circolare = ITIS_URL . $link_circolare;
                         $t_title = strlen($title) > 100 ? substr($title,0,100)."..." : $title;
-                        echo "<tbody> <tr> <td> <a href='$link_circolare' target=\"_blank\">$t_title</a> </td> <td> $data <td> </tr> </tbody>\n";
+                        echo "<tr>\n<td><a href='$link_circolare' target=\"_blank\">$t_title</a></td>\n<td>$data<td>\n</tr>\n";
                         $result = mysql_query("SELECT * FROM db_circolari where titolo='$title_esc' AND data='$data'", $link);
                         $num_rows = mysql_num_rows($result);
                         if ($num_rows == 0) {
@@ -548,9 +563,13 @@
                         }
                     }
                 }
-            
-                echo "</table>\n";
 
+                ?>
+                
+                </tbody>
+                </table>
+
+                <?php
                 $circolari = array_reverse($circolari);
 
                 foreach ($utenti as & $utente) {
@@ -569,9 +588,20 @@
 
                 }
                 
-                                
-                echo "<br><br>\n";
-                echo "<table class=\"centered\"> <thead> <tr> <th>Evento</th> <th>Data</th> </tr> </thead>\n";
+                ?>
+
+                <br><br>
+                
+                <table class="centered">
+                <thead>
+                <tr>
+                <th>Evento</th>
+                <th>Data</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <?php
                 $table = $dom->getElementsByTagName('table')->item(1); //Eventi
                 $rows = $table->getElementsByTagName('tr');
                 $eventi = array();
@@ -582,7 +612,7 @@
                         $testo = $row->getElementsByTagName('span')->item(2)->nodeValue;
                         $link_evento = $row->getElementsByTagName('span')->item(2)->getElementsByTagName('a')->item(0)->getattribute('onclick');
                         $link_evento = getLinkEvento($link_evento);
-                        echo "<tbody><tr> <td> <a href='$link_evento' target=\"_blank\">$testo </a></td> <td> $data_inizio - $data_fine_ora </td> </tr> </tbody>\n";
+                        echo "<tr>\n<td><a href='$link_evento' target=\"_blank\">$testo </a></td>\n<td> $data_inizio - $data_fine_ora </td>\n</tr>\n";
                         $tag_array;
                         if (strpos($data_fine_ora, ':') !== false) {
                             $tag_array = "ora";
@@ -593,8 +623,12 @@
                         $eventi[] = $evento;
                     }
                 }
-                echo "</table>\n";
 
+                ?>
+                </tbody>
+                </table>
+
+                <?php
                 $eventi = array_reverse($eventi);
                 foreach ($eventi as & $evento) {
                     $data_inizio = $evento['data_inizio'];
