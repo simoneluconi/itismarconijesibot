@@ -622,10 +622,10 @@
                             $message = "\xF0\x9F\x93\x86 <b> $data_inizio </b>\n";
                             $message.= "\xF0\x9F\x95\x90 <b> $ora </b>\n";
                             $message.= "\xE2\x9C\x8F $testo \n";
-                            if (!is_null($comando_circolare)) $message.= "\xF0\x9F\x93\x8E	Circolare allegata: $comando_circolare\n";
+                            if (!is_null($comando_circolare)) $message.= "\xF0\x9F\x93\x8E Circolare allegata: $comando_circolare\n";
                             $testo = mysql_real_escape_string($testo);
                             $evento_link = $evento['link'];
-                            $result = mysql_query("INSERT INTO db_eventi (evento, data_inizio, ora, link, circolare_allegata) VALUES ('$testo', '$data_inizio', '$ora', '$evento_link', $numero_circolare)");
+                            $result = mysql_query("INSERT INTO db_eventi (evento, data_inizio, ora, link, circolare_allegata) VALUES ('$testo', '$data_inizio', '$ora', '$evento_link', '$numero_circolare')");
 
                             $add_evento = squarecandy_add_to_gcal($testo, $data_inizio.' '.$ora);
                             $keyboard = array(array(array("text" => "\xF0\x9F\x8C\x8D Guarda nel sito", "url" => $evento_link)),array(array("text"=> "\xF0\x9F\x93\x8C Aggiungi al calendario", "url"  => $add_evento)));
@@ -638,9 +638,10 @@
                             $data_fine = $evento['data_fine'];
                             $message = "\xF0\x9F\x93\x86 <b>" . $data_inizio . " - " . $data_fine . "</b>\n";
                             $message.= "\xE2\x9C\x8F $testo \n";
-                            if (!is_null($comando_circolare)) $message.= "\xF0\x9F\x93\x8E	Circolare allegata: $comando_circolare\n";
+                            if (!is_null($comando_circolare)) $message.= "\xF0\x9F\x93\x8E Circolare allegata: $comando_circolare\n";
+                            $testo = mysql_real_escape_string($testo);
                             $evento_link = $evento['link'];
-                            $result = mysql_query("INSERT INTO db_eventi (evento, data_inizio, data_fine, link, circolare_allegata) VALUES ('$testo', '$data_inizio', '$data_fine', '$evento_link', $numero_circolare)");
+                            $result = mysql_query("INSERT INTO db_eventi (evento, data_inizio, data_fine, link, circolare_allegata) VALUES ('$testo', '$data_inizio', '$data_fine', '$evento_link', '$numero_circolare')");
                             
                             $add_evento = squarecandy_add_to_gcal($testo, $data_inizio, $data_fine);
                             $keyboard = array(array(array("text" => "\xF0\x9F\x8C\x8D Guarda nel sito", "url" => $evento_link)),array(array("text"=> "\xF0\x9F\x93\x8C Aggiungi al calendario", "url"  => $add_evento)));
