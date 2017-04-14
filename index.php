@@ -12,13 +12,21 @@
    </head>
    <body>
       <nav class="light-blue lighten-1" role="navigation">
-         <div class="nav-wrapper container">
-            <a href="#" class="brand-logo">ITIS Marconi Jesi Bot</a>
-            <ul id="nav-mobile" class="right hide-on-med-and-down">
-               <li><a href="https://t.me/itismarconijesibot">Aggiungi a Telegram</a></li>
-               <li><a href="https://t.me/simoneluconi">Contattami</a></li>
-            </ul>
-         </div>
+
+    <div class="nav-wrapper container">
+    <a href="#" class="brand-logo">ITIS Marconi Jesi Bot</a>
+    <ul class="right hide-on-med-and-down">
+        <li><a href="https://t.me/itismarconijesibot">Aggiungi a Telegram</a></li>
+        <li><a href="https://t.me/simoneluconi">Contattami</a></li>
+        <li><a href="https://github.com/simoneluconi/itismarconijesibot">Github</a></li>
+      </ul>
+      <ul id="nav-mobile" class="side-nav">
+        <li><a href="https://t.me/itismarconijesibot">Aggiungi a Telegram</a></li>
+        <li><a href="https://t.me/simoneluconi">Contattami</a></li>
+        <li><a href="https://github.com/simoneluconi/itismarconijesibot">Github</a></li>
+      </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+    </div>
       </nav>
       <div class="container">
          <?php
@@ -691,4 +699,16 @@
             ?>
       </div>
    </body>
+
+   <script>
+
+(function($){
+  $(function(){
+
+    $('.button-collapse').sideNav();
+
+  }); // end of document ready
+})(jQuery); // end of jQuery name space
+
+   </script>
 </html>
