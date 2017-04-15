@@ -89,6 +89,12 @@
                 file_get_contents(Telegram . "/sendMessage?chat_id=$chat_id&text=" . urlencode($message) . "&reply_markup=".urlencode($reply) . "&parse_mode=HTML");
             }
 
+            function sendInlineKeyboardwithDocument($chat_id, $document, $caption, $keyboard) {
+                $resp = array("inline_keyboard" => $keyboard);
+                $reply = json_encode($resp);
+                file_get_contents(Telegram . "/sendDocument?chat_id=$chat_id&document=$document&caption=" . urlencode($caption). "&reply_markup=".urlencode($reply));
+            }
+
             function answerCallbackQuery($callback_id) {
                 file_get_contents(Telegram . "/answerCallbackQuery?callback_query_id=$callback_id");
             }
@@ -562,9 +568,11 @@
                                 $lastrow = $table->getElementsByTagName('tr')->item(0);
                                 $tds = $lastrow->getElementsByTagName('td');
                                 $allegato = $tds->item(0)->getElementsByTagName('a')->item(0);
+                                echo $allegato ."<br>";
                                 if (!is_null($allegato)) {
                                     $allegato = $allegato->getattribute('href');
                                     $result = mysql_query("INSERT INTO db_circolari (titolo, data, allegato) VALUES ('$title_esc', '$data', '$allegato')");
+                                    echo $result."-> $title_esc <br>";
                                     if ($table->getElementsByTagName('tr')->length == 1) {
                                         $circolare = array("title" => $title, "allegato" => $allegato);
                                     } else{
@@ -600,21 +608,24 @@
                 <?php
                 $circolari = array_reverse($circolari);
 
-                foreach ($utenti as & $utente) {
+                //foreach ($utenti as & $utente) {
                     foreach ($circolari as $circolare) {
-                        sendDocument($utente['chat_id'], $circolare['allegato'], $circolare['title']);
-
-                        if ($circolare['allegati'])
-                        {
-                            $message_allegati = "\xE2\x9D\x97 <b>Attenzione!</b> Nella precedente circolare sono presenti altri allegati";
-                            foreach ($circolare['allegati'] as &$allegato) {
-                                $message_allegati .= "\n• ".$allegato['title'].": /allegato_".$allegato['id'];
-                            }
-                            sendMessage($utente['chat_id'], $message_allegati);
+                        if (!$circolare['allegati']) { 
+                            sendDocument("150543610", $circolare['allegato'], $circolare['title']);
+                            sendMessage("150543610", "Non Funziona");
+                        } else {
+                                $keyboard = array();
+                                    foreach ($circolare['allegati'] as &$allegato) {
+                                        $keyboard[] = array(array("text" => "\xF0\x9F\x93\x8E ".$allegato['title'], "callback_data" => "all://".$allegato['id']));
+                         
+                               }
+                               sendMessage("150543610", "Funziona");
+                                //sendInlineKeyboardwithDocument($utente['chat_id'], $circolare['allegato'], $circolare['title'], $keyboard);
+                                sendInlineKeyboardwithDocument("150543610", $circolare['allegato'], $circolare['title'], $keyboard);
                         }
                     }
 
-                }
+               // }
                 
                 ?>
 
