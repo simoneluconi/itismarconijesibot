@@ -89,6 +89,10 @@
                 file_get_contents(Telegram . "/sendMessage?chat_id=$chat_id&text=" . urlencode($message) . "&reply_markup=".urlencode($reply) . "&parse_mode=HTML");
             }
 
+            function answerCallbackQuery($callback_id) {
+                file_get_contents(Telegram . "/answerCallbackQuery?callback_query_id=$callback_id");
+            }
+
             function errCircolari($chat_id) {
                 sendMessage($chat_id, "\xE2\x9D\x97 Formato del messaggio non valido!");
                 sendMessage($chat_id, message_circolari);
@@ -175,6 +179,38 @@
             $org = mysql_real_escape_string($details->org);
             $postal = mysql_real_escape_string($details->postal);
             $result = mysql_query("INSERT INTO db_bot_telegram_itis_accessi (ip, hostname, city, region, country, org, postal, time) VALUES ('$ip', '$hostname', '$city', '$region', '$country', '$org', '$postal', '$date')");
+
+            if (isset($updates['callback_query'])) 
+             {
+                    $user_name = $updates['callback_query']['message']['from']['first_name'];
+                    $user_surname = $updates['callback_query']['message']['from']['last_name'];
+                    $user_id = $updates['callback_query']['message']['from']['id'];
+                    $chat_id = $updates['callback_query']['message']['chat']['id'];
+                    $message_id = $updates['callback_query']['message']['message_id'];
+                    $message = $updates['callback_query']['message']['text'];
+                    $callback_id = $updates['callback_query']['id'];
+                    $callback_data = $updates['callback_query']['data'];
+
+                    if((strpos($callback_data, 'circolare://') !== false))
+                    {
+                        sendChatAction($chat_id, UPLOAD_DOCUMENT);
+                        $cerca = str_replace("circolare://", "", $callback_data);
+                        $cerca = "circolare n." . $cerca;
+                        $cerca = mysql_real_escape_string($cerca);
+                        $result = mysql_query("SELECT * FROM db_circolari WHERE titolo LIKE '$cerca%'");
+                        $num_rows = mysql_num_rows($result);
+                        if ($num_rows == 0) {
+                            sendMessage($chat_id, "Mi dispiace, non ho trovato nessuna circolare numero $cerca \xF0\x9F\x98\x94");
+                        } else {
+                            while ($row = mysql_fetch_assoc($result)) {
+                                sendDocument($chat_id, $row['allegato'], $row['titolo']);
+                            }
+                        }
+
+                        answerCallbackQuery($callback_id);
+                    }
+
+                }
             
                 if (strpos($last_command, 'Studenti') !== false)
                 {
@@ -322,22 +358,6 @@
             } else if ($message == "/circolari" || $message == "/circolari@itismarconijesibot") {
                 sendChatAction($chat_id, TYPING);
                 sendMessage($chat_id, message_circolari);
-            } else if (strpos(strtolower($message), '/circolare_') !== false) {
-                sendChatAction($chat_id, UPLOAD_DOCUMENT);
-                $cerca = str_replace("@itismarconijesibot", "", $message);
-                $cerca = str_replace("/circolare_", "", $message);
-                $cerca = "circolare n." . $cerca;
-                $cerca = mysql_real_escape_string($cerca);
-                $result = mysql_query("SELECT * FROM db_circolari WHERE titolo LIKE '$cerca%'");
-                $num_rows = mysql_num_rows($result);
-                if ($num_rows == 0) {
-                    sendMessage($chat_id, "Mi dispiace, non ho trovato nessuna circolare numero $cerca \xF0\x9F\x98\x94");
-                } else {
-                    while ($row = mysql_fetch_assoc($result)) {
-                        sendDocument($chat_id, $row['allegato'], $row['titolo']);
-                    }
-                }
-                updateLastCommand($chat_id, NULL);
             } else if (strpos(strtolower($message), '/allegato_') !== false) {
                 sendChatAction($chat_id, UPLOAD_DOCUMENT);
                 $cerca = str_replace("@itismarconijesibot", "", $message);
@@ -474,7 +494,7 @@
                     remove_keyboard($chat_id, "Ultimo comando cancellato \xF0\x9F\x98\x89");
                     updateLastCommand($chat_id, NULL);
                 } else sendMessage($chat_id, "Nessun comando da cancellare \xF0\x9F\x98\x85");
-            } else 
+            } else if (!isset($updates['callback_query']))
             { 
                 remove_keyboard($chat_id, "Mi dispiace, <b>$message</b> non è un comando valido.");
                 updateLastCommand($chat_id, NULL);
@@ -658,36 +678,42 @@
                         }
                         if (!is_null($circolare_allegata)) {
                             $numero_circolare = filter_var($circolare_allegata, FILTER_SANITIZE_NUMBER_INT);
-                            $comando_circolare = "/circolare_" . $numero_circolare;
                         }
                         if (!is_null($evento['ora'])) {
+                            $keyboard = array();
                             $ora = $evento['ora'];
                             $message = "\xF0\x9F\x93\x86 <b> $data_inizio </b>\n";
                             $message.= "\xF0\x9F\x95\x90 <b> $ora </b>\n";
                             $message.= "\xE2\x9C\x8F $testo \n";
-                            if (!is_null($comando_circolare)) $message.= "\xF0\x9F\x93\x8E Circolare allegata: $comando_circolare\n";
+                            if (!is_null($circolare_allegata))  $keyboard[] = array(array("text" => "\xF0\x9F\x93\x8E Circolare N. $numero_circolare", "callback_data" => "circolare://$numero_circolare"));
                             $testo = mysql_real_escape_string($testo);
                             $evento_link = $evento['link'];
                             $result = mysql_query("INSERT INTO db_eventi (evento, data_inizio, ora, link, circolare_allegata) VALUES ('$testo', '$data_inizio', '$ora', '$evento_link', '$numero_circolare')");
 
                             $add_evento = squarecandy_add_to_gcal($testo, $data_inizio.' '.$ora);
-                            $keyboard = array(array(array("text" => "\xF0\x9F\x8C\x8D Guarda nel sito", "url" => $evento_link)),array(array("text"=> "\xF0\x9F\x93\x8C Aggiungi al calendario", "url"  => $add_evento)));
+
+                            $keyboard[] = array(array("text" => "\xF0\x9F\x8C\x8D Guarda nel sito", "url" => $evento_link));
+                            $keyboard[] = array(array("text"=> "\xF0\x9F\x93\x8C Aggiungi al calendario", "url"  => $add_evento));
 
                             foreach ($utenti as & $utente) {
                                 sendInlineKeyboard($utente['chat_id'], $message, $keyboard);
                             }
 
                         } else {
+                            $keyboard = array();
                             $data_fine = $evento['data_fine'];
                             $message = "\xF0\x9F\x93\x86 <b>" . $data_inizio . " - " . $data_fine . "</b>\n";
                             $message.= "\xE2\x9C\x8F $testo \n";
-                            if (!is_null($comando_circolare)) $message.= "\xF0\x9F\x93\x8E Circolare allegata: $comando_circolare\n";
+                            if (!is_null($circolare_allegata))  $keyboard[] = array(array("text" => "\xF0\x9F\x93\x8E Circolare N. $numero_circolare", "callback_data" => "circolare://$numero_circolare"));
                             $testo = mysql_real_escape_string($testo);
                             $evento_link = $evento['link'];
                             $result = mysql_query("INSERT INTO db_eventi (evento, data_inizio, data_fine, link, circolare_allegata) VALUES ('$testo', '$data_inizio', '$data_fine', '$evento_link', '$numero_circolare')");
                             
                             $add_evento = squarecandy_add_to_gcal($testo, $data_inizio, $data_fine);
-                            $keyboard = array(array(array("text" => "\xF0\x9F\x8C\x8D Guarda nel sito", "url" => $evento_link)),array(array("text"=> "\xF0\x9F\x93\x8C Aggiungi al calendario", "url"  => $add_evento)));
+
+                            $keyboard[] = array(array("text" => "\xF0\x9F\x8C\x8D Guarda nel sito", "url" => $evento_link));
+                            $keyboard[] = array(array("text"=> "\xF0\x9F\x93\x8C Aggiungi al calendario", "url"  => $add_evento));
+                    
 
                             foreach ($utenti as & $utente) {
                                 sendInlineKeyboard($utente['chat_id'], $message, $keyboard);
