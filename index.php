@@ -214,6 +214,22 @@
                         }
 
                         answerCallbackQuery($callback_id);
+                    } else if((strpos($callback_data, 'all://') !== false))
+                    {
+                        sendChatAction($chat_id, UPLOAD_DOCUMENT);
+                        $cerca = str_replace("all://", "", $callback_data);
+                        $cerca = mysql_real_escape_string($cerca);
+                        $result = mysql_query("SELECT * FROM db_allegati WHERE id='$cerca'");
+                        $num_rows = mysql_num_rows($result);
+                        if ($num_rows == 0) {
+                            sendMessage($chat_id, "Mi dispiace, non ho trovato nessuna allegato con questo ID \xF0\x9F\x98\x94");
+                        } else {
+                            while ($row = mysql_fetch_assoc($result)) {
+                                sendDocument($chat_id, $row['allegato'], $row['titolo']);
+                            }
+                        }
+
+                        answerCallbackQuery($callback_id);
                     }
 
                 }
@@ -364,23 +380,7 @@
             } else if ($message == "/circolari" || $message == "/circolari@itismarconijesibot") {
                 sendChatAction($chat_id, TYPING);
                 sendMessage($chat_id, message_circolari);
-            } else if (strpos(strtolower($message), '/allegato_') !== false) {
-                sendChatAction($chat_id, UPLOAD_DOCUMENT);
-                $cerca = str_replace("@itismarconijesibot", "", $message);
-                $cerca = str_replace("/allegato_", "", $message);
-                $cerca = mysql_real_escape_string($cerca);
-                $result = mysql_query("SELECT * FROM db_allegati WHERE id='$cerca'");
-                $num_rows = mysql_num_rows($result);
-                if ($num_rows == 0) {
-                    sendMessage($chat_id, "Mi dispiace, non ho trovato nessuna allegato con questo ID \xF0\x9F\x98\x94");
-                } else {
-                    while ($row = mysql_fetch_assoc($result)) {
-                        sendDocument($chat_id, $row['allegato'], $row['titolo']);
-                    }
-                }
-                updateLastCommand($chat_id, NULL);
-            }          
-            else if ((strpos(strtolower($message), 'circolare') !== false ) && (strpos($last_command, '/circolari') !== false)) {
+            } else if ((strpos(strtolower($message), 'circolare') !== false ) && (strpos($last_command, '/circolari') !== false)) {
                 sendChatAction($chat_id, TYPING);
                 $tmp = explode(" ", $message);
                 if (count($tmp) > 1) {
@@ -568,7 +568,6 @@
                                 $lastrow = $table->getElementsByTagName('tr')->item(0);
                                 $tds = $lastrow->getElementsByTagName('td');
                                 $allegato = $tds->item(0)->getElementsByTagName('a')->item(0);
-                                echo $allegato ."<br>";
                                 if (!is_null($allegato)) {
                                     $allegato = $allegato->getattribute('href');
                                     $result = mysql_query("INSERT INTO db_circolari (titolo, data, allegato) VALUES ('$title_esc', '$data', '$allegato')");
@@ -608,24 +607,21 @@
                 <?php
                 $circolari = array_reverse($circolari);
 
-                //foreach ($utenti as & $utente) {
+                foreach ($utenti as & $utente) {
                     foreach ($circolari as $circolare) {
                         if (!$circolare['allegati']) { 
-                            sendDocument("150543610", $circolare['allegato'], $circolare['title']);
-                            sendMessage("150543610", "Non Funziona");
+                            sendDocument($utente['chat_id'], $circolare['allegato'], $circolare['title']);
                         } else {
                                 $keyboard = array();
                                     foreach ($circolare['allegati'] as &$allegato) {
                                         $keyboard[] = array(array("text" => "\xF0\x9F\x93\x8E ".$allegato['title'], "callback_data" => "all://".$allegato['id']));
                          
                                }
-                               sendMessage("150543610", "Funziona");
-                                //sendInlineKeyboardwithDocument($utente['chat_id'], $circolare['allegato'], $circolare['title'], $keyboard);
-                                sendInlineKeyboardwithDocument("150543610", $circolare['allegato'], $circolare['title'], $keyboard);
+                                sendInlineKeyboardwithDocument($utente['chat_id'], $circolare['allegato'], $circolare['title'], $keyboard);
                         }
                     }
 
-               // }
+                }
                 
                 ?>
 
