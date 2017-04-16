@@ -167,6 +167,31 @@
                 $row = mysql_fetch_assoc($result);
                 return $row['last_command'];
             }
+
+            function trovaAllegatiPerCircolare($titolo)
+            {
+                $titolo = mysql_real_escape_string($titolo);
+                $result = mysql_query("SELECT * from db_allegati where circolare='$titolo'");
+                $results = array();
+                while($row = mysql_fetch_assoc($result)){
+                    $results[] = $row;
+                }
+                return $results;
+            }
+
+            function inviaCircolare($chat_id, $row) //Ricorda: Questa funzione non invia le nuove circolari, solo quelle prese dal DB
+            {
+                $allegati = trovaAllegatiPerCircolare($row['titolo']);
+                    if (!count($allegati)){
+                        sendDocument($chat_id, $row['allegato'], $row['titolo']);
+                    } else {
+                        $keyboard = array();
+                        foreach ($allegati as &$allegato) {
+                            $keyboard[] = array(array("text" => "\xF0\x9F\x93\x8E ".$allegato['titolo'], "callback_data" => "all://".$allegato['id']));
+                        }
+                        sendInlineKeyboardwithDocument($chat_id, $row['allegato'], $row['titolo'], $keyboard);
+                    }
+            }
             
             if ($message)
             {
@@ -394,7 +419,7 @@
                             sendChatAction($chat_id, UPLOAD_DOCUMENT);
                             remove_keyboard($chat_id, "\xF0\x9F\x93\xA9	Ti invio la circolare:");
                             while ($row = mysql_fetch_assoc($result)) {
-                                sendDocument($chat_id, $row['allegato'], $row['titolo']);
+                                inviaCircolare($chat_id, $row);
                             }
                                 updateLastCommand($chat_id, NULL);
                         } else {
@@ -428,7 +453,7 @@
                             if ($num_rows == 1) sendMessage($chat_id, "\xF0\x9F\x93\x91	Ho trovato questa circolare:");
                             else sendMessage($chat_id, "\xF0\x9F\x93\x91 Ho trovato queste circolari:");
                             while ($row = mysql_fetch_assoc($result)) {
-                                sendDocument($chat_id, $row['allegato'], $row['titolo']);
+                                inviaCircolare($chat_id, $row);
                             }
                         }
                             updateLastCommand($chat_id, NULL);
