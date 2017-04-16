@@ -5,4 +5,4 @@ Bot di Telegram per l'ITIS Marconi di Jesi
 
 Per altre informazioni puoi contattare [@simoneluconi](https://t.me/simoneluconi)
 
->Ps. Sono consapevole che alcune parti di questo codice fanno schifo, non so quasi nulla di php, per questo un piccolo aiuto sarebbe gradito.
+>Ps. Per chi volesse contribuire, un piccolo aiuto sarà ben accetto 😉
