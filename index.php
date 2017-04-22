@@ -36,7 +36,7 @@
             define("Token", "342594609:AAFKHHMTxwsqqVwf5kHmOeRb3BZcslSrOBk");
             define("Google_Api_Key", "AIzaSyDSgH3wS8BceILLAq6I1c8pgOuoEaf09Mg");
             define("Telegram", "https://api.telegram.org/bot" . Token);
-            define("ITIS_URL", "http://www.itismarconi-jesi.gov.it");
+            define("ITIS_URL", "https://www.itismarconi-jesi.gov.it");
             define("HOST_URL", "http://simoneluconi.altervista.org");
             define("TYPING", "typing");
             define("UPLOAD_PHOTO", "upload_photo");
