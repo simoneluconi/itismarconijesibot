@@ -531,7 +531,7 @@
                 updateLastCommand($chat_id, NULL);
             }
 
-              if (!$message) {
+              if (!$message && !isset($updates['callback_query'])) {
                 $result = mysql_query("SELECT * FROM db_bot_telegram_itis");
                 $utenti = array();
                 while ($row = mysql_fetch_assoc($result)) {
