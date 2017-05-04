@@ -118,6 +118,28 @@
                     echo "Ops...";
                   }
             }
+
+            function isOnline($domain) {
+                $curlInit = curl_init($domain);
+                curl_setopt($curlInit,CURLOPT_CONNECTTIMEOUT,10);
+                curl_setopt($curlInit,CURLOPT_HEADER,true);
+                curl_setopt($curlInit,CURLOPT_NOBODY,true);
+                curl_setopt($curlInit,CURLOPT_RETURNTRANSFER,true);
+
+                //get answer
+                $response = curl_exec($curlInit);
+
+                if ($response) 
+                {
+                    $httpcode = curl_getinfo($curlInit, CURLINFO_HTTP_CODE);
+                    curl_close($curlInit);
+                    if ($httpcode == 200)
+                    return true;
+                    else return false;
+                }
+                return false;
+            }
+
             register_shutdown_function("fatal_handler");
             function shortUrl($long_url) {
                 $url = 'https://www.googleapis.com/urlshortener/v1/url?key=' . Google_Api_Key;
@@ -414,7 +436,7 @@
                         //sendMessage($chat_id, "Formato del messaggio non valido \xF0\x9F\x98\x94 \nDevi scrivere ad esempio \"Circolare 220\"");
                         $message_escaped = mysql_real_escape_string($message);
                         $message_escaped = str_replace("..", "", $message_escaped);
-                        $result = mysql_query("SELECT * FROM db_circolari WHERE titolo LIKE '$message_escaped%'");
+                        $result = mysql_query("SELECT * FROM db_circolari WHERE titolo LIKE LOWER('$message_escaped%')");
                         if (mysql_num_rows($result) > 0) {
                             sendChatAction($chat_id, UPLOAD_DOCUMENT);
                             remove_keyboard($chat_id, "\xF0\x9F\x93\xA9	Ti invio la circolare:");
@@ -520,6 +542,40 @@
                     updateLastCommand($chat_id, NULL);
                     errCircolari($chat_id);
                 }
+            } else if ($message == "/stato" || $message == "/stato@itismarconijesibot") {
+            
+            sendChatAction($chat_id, TYPING);
+            $message = "<b>Stato dei servizi scolastici:</b>\n";
+            $message .= "\xF0\x9F\x94\xB4 = Offline | \xF0\x9F\x94\xB5 = Online\n\n";
+           
+            if (isOnline("https://web.spaggiari.eu/home/app/default/login.php"))
+            {
+                $message.= "\xF0\x9F\x94\xB5";
+            } else {
+                $message .= "\xF0\x9F\x94\xB4";
+            }
+
+             $message .= "\tRegistro elettronico\n";
+
+            if (isOnline("https://elearning.itis.jesi.an.it/login/index.php"))
+            {
+                $message.= "\xF0\x9F\x94\xB5";
+            } else {
+                $message .= "\xF0\x9F\x94\xB4";
+            }
+
+            $message .= "\tMoodle\n";
+
+            if (isOnline("https://www.itismarconi-jesi.gov.it/"))
+            {
+                $message.= "\xF0\x9F\x94\xB5";
+            } else {
+                $message .= "\xF0\x9F\x94\xB4";
+            }
+             
+             $message .= "\tSito della scuola\n";
+             sendMessage($chat_id, $message);
+             updateLastCommand($chat_id, NULL);
             } else if ($message == "/cancella" || $message == "/cancella@itismarconijesibot") {
                 if ($last_command) {
                     remove_keyboard($chat_id, "Ultimo comando cancellato \xF0\x9F\x98\x89");
