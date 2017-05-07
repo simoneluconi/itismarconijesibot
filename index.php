@@ -33,9 +33,8 @@
             include 'simple_html_dom.php';
             include 'addCal.php';
             include 'random.php';
-            define("Token", "342594609:AAFKHHMTxwsqqVwf5kHmOeRb3BZcslSrOBk");
-            define("Google_Api_Key", "AIzaSyDSgH3wS8BceILLAq6I1c8pgOuoEaf09Mg");
-            define("Telegram", "https://api.telegram.org/bot" . Token);
+            include 'config.php';
+            define("Telegram", "https://api.telegram.org/bot" . TELEGRAM_TOKEN);
             define("ITIS_URL", "https://www.itismarconi-jesi.gov.it");
             define("HOST_URL", "http://simoneluconi.altervista.org");
             define("TYPING", "typing");
@@ -168,36 +167,39 @@
             $user_name = $updates['message']['from']['first_name'];
             $chat_id = $updates['message']['chat']['id'];
             $message = $updates['message']['text'];
-            $link = mysql_connect("localhost", "simoneluconi", "");
-            mysql_select_db("my_simoneluconi", $link);
-            
             
             function updateLastCommand($chat_id, $command)
-            {
+            {            
+                $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);   
                 if ($command) {
-                $command = mysql_real_escape_string($command);
-                $result = mysql_query("UPDATE db_bot_telegram_itis SET last_command = '$command' where chat_id='$chat_id'");
+                $command = $mysqli->real_escape_string($command);
+                $result = $mysqli->query("UPDATE db_bot_telegram_itis SET last_command = '$command' where chat_id='$chat_id'");
                 } else 
                 {
-                $result = mysql_query("UPDATE db_bot_telegram_itis SET last_command = NULL where chat_id='$chat_id'");
+                $result = $mysqli->query("UPDATE db_bot_telegram_itis SET last_command = NULL where chat_id='$chat_id'");
                 }
+                $mysqli->close();
             }
             
             function getLastCommand($chat_id)
             {
-                $result = mysql_query("SELECT last_command from db_bot_telegram_itis where chat_id='$chat_id'");
-                $row = mysql_fetch_assoc($result);
+                $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);    
+                $result = $mysqli->query("SELECT last_command from db_bot_telegram_itis where chat_id='$chat_id'");
+                $row = $result->fetch_assoc();
+                $mysqli->close();
                 return $row['last_command'];
             }
 
             function trovaAllegatiPerCircolare($titolo)
             {
-                $titolo = mysql_real_escape_string($titolo);
-                $result = mysql_query("SELECT * from db_allegati where circolare='$titolo'");
+                $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);    
+                $titolo = $mysqli->real_escape_string($titolo);
+                $result = $mysqli->query("SELECT * from db_allegati where circolare='$titolo'");
                 $results = array();
-                while($row = mysql_fetch_assoc($result)){
+                while($row = $result->fetch_assoc()){
                     $results[] = $row;
                 }
+                $mysqli->close();
                 return $results;
             }
 
@@ -214,6 +216,8 @@
                         sendInlineKeyboardwithDocument($chat_id, $row['allegato'], $row['titolo'], $keyboard);
                     }
             }
+
+            $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);    
             
             if ($message)
             {
@@ -221,17 +225,6 @@
                 if ($last_command != "/circolari" && $last_command != "/circolari@itismarconijesibot")
                     updateLastCommand($chat_id, $message);
             }
-            
-            $date = date('Y/m/d H:i:s');
-            $details = json_decode(file_get_contents("http://ipinfo.io/{$ip}/json"));
-            $ip = mysql_real_escape_string($ip);
-            $hostname = mysql_real_escape_string($details->hostname);
-            $city = mysql_real_escape_string($details->city);
-            $region = mysql_real_escape_string($details->region);
-            $country = mysql_real_escape_string($details->country);
-            $org = mysql_real_escape_string($details->org);
-            $postal = mysql_real_escape_string($details->postal);
-            $result = mysql_query("INSERT INTO db_bot_telegram_itis_accessi (ip, hostname, city, region, country, org, postal, time) VALUES ('$ip', '$hostname', '$city', '$region', '$country', '$org', '$postal', '$date')");
 
             if (isset($updates['callback_query'])) 
              {
@@ -249,13 +242,13 @@
                         sendChatAction($chat_id, UPLOAD_DOCUMENT);
                         $cerca = str_replace("circolare://", "", $callback_data);
                         $cerca = "circolare n." . $cerca;
-                        $cerca = mysql_real_escape_string($cerca);
-                        $result = mysql_query("SELECT * FROM db_circolari WHERE titolo LIKE '$cerca%'");
-                        $num_rows = mysql_num_rows($result);
+                        $cerca = $mysqli->real_escape_string($cerca);
+                        $result = $mysqli->query("SELECT * FROM db_circolari WHERE titolo LIKE '$cerca%'");
+                        $num_rows = $result->num_rows;
                         if ($num_rows == 0) {
                             sendMessage($chat_id, "Mi dispiace, non ho trovato nessuna circolare numero $cerca \xF0\x9F\x98\x94");
                         } else {
-                            while ($row = mysql_fetch_assoc($result)) {
+                            while ($row = $result->fetch_assoc()) {
                                 sendDocument($chat_id, $row['allegato'], $row['titolo']);
                             }
                         }
@@ -265,13 +258,13 @@
                     {
                         sendChatAction($chat_id, UPLOAD_DOCUMENT);
                         $cerca = str_replace("all://", "", $callback_data);
-                        $cerca = mysql_real_escape_string($cerca);
-                        $result = mysql_query("SELECT * FROM db_allegati WHERE id='$cerca'");
-                        $num_rows = mysql_num_rows($result);
+                        $cerca = $mysqli->real_escape_string($cerca);
+                        $result = $mysqli->query("SELECT * FROM db_allegati WHERE id='$cerca'");
+                        $num_rows = $result->num_rows;
                         if ($num_rows == 0) {
                             sendMessage($chat_id, "Mi dispiace, non ho trovato nessuna allegato con questo ID \xF0\x9F\x98\x94");
                         } else {
-                            while ($row = mysql_fetch_assoc($result)) {
+                            while ($row = $result->fetch_assoc()) {
                                 sendDocument($chat_id, $row['allegato'], $row['titolo']);
                             }
                         }
@@ -318,10 +311,10 @@
                 } 
                 else if ($message == "/start" || $message == "/start@itismarconijesibot") {
                 sendChatAction($chat_id, TYPING);
-                $result = mysql_query("SELECT * FROM db_bot_telegram_itis where chat_id='$chat_id'", $link);
-                $num_rows = mysql_num_rows($result);
+                $result = $mysqli->query("SELECT * FROM db_bot_telegram_itis where chat_id='$chat_id'", $link);
+                $num_rows = $result->num_rows;
                 if ($num_rows == 0) {
-                    $result = mysql_query("INSERT INTO db_bot_telegram_itis (chat_id) VALUES ('$chat_id')");
+                    $result = $mysqli->query("INSERT INTO db_bot_telegram_itis (chat_id) VALUES ('$chat_id')");
                     if ($result == 1) sendMessage($chat_id, "Benvenuto! Da questo momento iniziarai a ricevere notifiche di nuove circolari, eventi e altre comunicazioni \xF0\x9F\x98\x89");
                     else sendMessage($chat_id, "Ops...c'è stato un problema nell'avviare il bot \xF0\x9F\x98\x94");
                 } else sendMessage($chat_id, "Hei $user_name mi ricordo di te! Bentornato! \xF0\x9F\x98\x83");
@@ -434,23 +427,23 @@
                     $numero = intval($tmp[1]);
                     if ($numero == 0) {
                         //sendMessage($chat_id, "Formato del messaggio non valido \xF0\x9F\x98\x94 \nDevi scrivere ad esempio \"Circolare 220\"");
-                        $message_escaped = mysql_real_escape_string($message);
+                        $message_escaped = $mysqli->real_escape_string($message);
                         $message_escaped = str_replace("..", "", $message_escaped);
-                        $result = mysql_query("SELECT * FROM db_circolari WHERE titolo LIKE LOWER('$message_escaped%')");
-                        if (mysql_num_rows($result) > 0) {
+                        $result = $mysqli->query("SELECT * FROM db_circolari WHERE titolo LIKE LOWER('$message_escaped%')");
+                        if ($result->num_rows > 0) {
                             sendChatAction($chat_id, UPLOAD_DOCUMENT);
                             remove_keyboard($chat_id, "\xF0\x9F\x93\xA9	Ti invio la circolare:");
-                            while ($row = mysql_fetch_assoc($result)) {
+                            while ($row = $result->fetch_assoc()) {
                                 inviaCircolare($chat_id, $row);
                             }
                                 updateLastCommand($chat_id, NULL);
                         } else {
-                            $result = mysql_query("SELECT * FROM db_circolari");
-                            if (mysql_num_rows($result) > 0) sendChatAction($chat_id, UPLOAD_DOCUMENT);
+                            $result = $mysqli->query("SELECT * FROM db_circolari");
+                            if ($result->num_rows > 0) sendChatAction($chat_id, UPLOAD_DOCUMENT);
                             $circolari_keyboard = array();
                             $cerca = strtolower($message);
                             $cerca = str_replace("circolare ", "", $cerca);
-                            while ($row = mysql_fetch_assoc($result)) {
+                            while ($row = $result->fetch_assoc()) {
                                 $titolo = strtolower($row['titolo']);
                                 if (strpos($titolo, $cerca) !== false) {
                                     $circolari_keyboard[] = array($row['titolo']);
@@ -465,16 +458,16 @@
                         }
                     } else {
                         $cerca = "circolare n." . $numero;
-                        $cerca = mysql_real_escape_string($cerca);
-                        $result = mysql_query("SELECT * FROM db_circolari WHERE titolo LIKE '$cerca%'");
-                        $num_rows = mysql_num_rows($result);
+                        $cerca = $mysqli->real_escape_string($cerca);
+                        $result = $mysqli->query("SELECT * FROM db_circolari WHERE titolo LIKE '$cerca%'");
+                        $num_rows = $result->num_rows;
                         if ($num_rows == 0) {
                             sendMessage($chat_id, "Mi dispiace, non ho trovato nessuna circolare numero $numero \xF0\x9F\x98\x94");
                         } else {
                             sendChatAction($chat_id, UPLOAD_DOCUMENT);
                             if ($num_rows == 1) sendMessage($chat_id, "\xF0\x9F\x93\x91	Ho trovato questa circolare:");
                             else sendMessage($chat_id, "\xF0\x9F\x93\x91 Ho trovato queste circolari:");
-                            while ($row = mysql_fetch_assoc($result)) {
+                            while ($row = $result->fetch_assoc()) {
                                 inviaCircolare($chat_id, $row);
                             }
                         }
@@ -492,9 +485,9 @@
                         $ieri = new DateTime();
                         $ieri->sub(new DateInterval('P1D'));
                         $ieri_str = $ieri->format('d-m-Y');
-                        $result = mysql_query("SELECT * FROM db_circolari WHERE data = '$ieri_str'");
+                        $result = $mysqli->query("SELECT * FROM db_circolari WHERE data = '$ieri_str'");
                         $circolari_keyboard = array();
-                        while ($row = mysql_fetch_assoc($result)) {
+                        while ($row = $result->fetch_assoc()) {
                             $circolari_keyboard[] = array($row['titolo']);
                         }
                         if (count($circolari_keyboard) == 0) sendMessage($chat_id, "Ieri non è uscita nessuna circolare \xF0\x9F\x98\x94");
@@ -506,9 +499,9 @@
                     } else if ($tmp[2] == "oggi") {
                         $oggi = new DateTime();
                         $oggi = $oggi->format('d-m-Y');
-                        $result = mysql_query("SELECT * FROM db_circolari WHERE data = '$oggi'");
+                        $result = $mysqli->query("SELECT * FROM db_circolari WHERE data = '$oggi'");
                         $circolari_keyboard = array();
-                        while ($row = mysql_fetch_assoc($result)) {
+                        while ($row = $result->fetch_assoc()) {
                             $circolari_keyboard[] = array($row['titolo']);
                         }
                         if (count($circolari_keyboard) == 0) sendMessage($chat_id, "Oggi non è uscita nessuna circolare \xF0\x9F\x98\x94");
@@ -525,9 +518,9 @@
                         sendMessage($chat_id, "La data deve essere nel formato <b>gg/mm/aa</b>");
                     } else {
                         $date_circolare_format = $date_circolare->format('d-m-Y');
-                        $result = mysql_query("SELECT * FROM db_circolari WHERE data = '$date_circolare_format'");
+                        $result = $mysqli->query("SELECT * FROM db_circolari WHERE data = '$date_circolare_format'");
                         $circolari_keyboard = array();
-                        while ($row = mysql_fetch_assoc($result)) {
+                        while ($row = $result->fetch_assoc()) {
                             $circolari_keyboard[] = array($row['titolo']);
                         }
                         if (count($circolari_keyboard) == 0) sendMessage($chat_id, "Non c'è nessuna circolare in data $date_circolare_format \xF0\x9F\x98\x94");
@@ -581,16 +574,16 @@
                     remove_keyboard($chat_id, "Ultimo comando cancellato \xF0\x9F\x98\x89");
                     updateLastCommand($chat_id, NULL);
                 } else sendMessage($chat_id, "Nessun comando da cancellare \xF0\x9F\x98\x85");
-            } else if (!isset($updates['callback_query']))
+            } else if (!isset($updates['callback_query']) && !is_null($message))
             { 
                 remove_keyboard($chat_id, "Mi dispiace, <b>$message</b> non è un comando valido.");
                 updateLastCommand($chat_id, NULL);
             }
 
               if (!$message && !isset($updates['callback_query'])) {
-                $result = mysql_query("SELECT * FROM db_bot_telegram_itis");
+                $result = $mysqli->query("SELECT * FROM db_bot_telegram_itis");
                 $utenti = array();
-                while ($row = mysql_fetch_assoc($result)) {
+                while ($row = $result->fetch_assoc()) {
                     $utenti[] = $row;
                 }
             
@@ -631,13 +624,13 @@
                     if (strlen($title) > 0) {
                         $title = trim(str_replace("\n", "", $title));
                         $data = trim(str_replace("\n", "", $data));
-                        $title_esc = mysql_real_escape_string($title);
-                        $data = mysql_real_escape_string($data);
+                        $title_esc = $mysqli->real_escape_string($title);
+                        $data = $mysqli->real_escape_string($data);
                         $link_circolare = ITIS_URL . $link_circolare;
                         $t_title = strlen($title) > 100 ? substr($title,0,100)."..." : $title;
                         echo "<tr>\n<td><a href='$link_circolare' target=\"_blank\">$t_title</a></td>\n<td>$data<td>\n</tr>\n";
-                        $result = mysql_query("SELECT * FROM db_circolari where titolo='$title_esc' AND data='$data'", $link);
-                        $num_rows = mysql_num_rows($result);
+                        $result = $mysqli->query("SELECT * FROM db_circolari where titolo='$title_esc' AND data='$data'", $link);
+                        $num_rows = $result->num_rows;
                         if ($num_rows == 0) {
                             $dom = new DomDocument();
                             $content = Download_Html($link_circolare);
@@ -651,7 +644,7 @@
                                 $allegato = $tds->item(0)->getElementsByTagName('a')->item(0);
                                 if (!is_null($allegato)) {
                                     $allegato = $allegato->getattribute('href');
-                                    $result = mysql_query("INSERT INTO db_circolari (titolo, data, allegato) VALUES ('$title_esc', '$data', '$allegato')");
+                                    $result = $mysqli->query("INSERT INTO db_circolari (titolo, data, allegato) VALUES ('$title_esc', '$data', '$allegato')");
                                     echo $result."-> $title_esc <br>";
                                     if ($table->getElementsByTagName('tr')->length == 1) {
                                         $circolare = array("title" => $title, "allegato" => $allegato);
@@ -667,7 +660,7 @@
                                             $AllegatoLink = $tmpDatiAllegato2->getattribute('href');
                                             $AllegatoId = generateRandomString();
                                             $allegato2 = array("title" => $AllegatoTitolo, "allegato" => $AllegatoLink, "id" => $AllegatoId);
-                                            $result = mysql_query("INSERT INTO db_allegati (titolo, allegato, id, circolare) VALUES ('$AllegatoTitolo', '$AllegatoLink', '$AllegatoId' , '$title_esc')");
+                                            $result = $mysqli->query("INSERT INTO db_allegati (titolo, allegato, id, circolare) VALUES ('$AllegatoTitolo', '$AllegatoLink', '$AllegatoId' , '$title_esc')");
                                             $allegati[] = $allegato2;
                                         }
 
@@ -749,8 +742,8 @@
                 foreach ($eventi as & $evento) {
                     $data_inizio = $evento['data_inizio'];
                     $testo = $evento['testo'];
-                    $result = mysql_query("SELECT * FROM db_eventi where evento='$testo' AND data_inizio='$data_inizio'", $link);
-                    $num_rows = mysql_num_rows($result);
+                    $result = $mysqli->query("SELECT * FROM db_eventi where evento='$testo' AND data_inizio='$data_inizio'", $link);
+                    $num_rows = $result->num_rows;
                     if ($num_rows == 0) {
                         $dom = new DomDocument();
                         $content = Download_Html($evento['link']);
@@ -774,9 +767,9 @@
                             $message.= "\xF0\x9F\x95\x90 <b> $ora </b>\n";
                             $message.= "\xE2\x9C\x8F $testo \n";
                             if (!is_null($circolare_allegata))  $keyboard[] = array(array("text" => "\xF0\x9F\x93\x8E Circolare N. $numero_circolare", "callback_data" => "circolare://$numero_circolare"));
-                            $testo = mysql_real_escape_string($testo);
+                            $testo = $mysqli->real_escape_string($testo);
                             $evento_link = $evento['link'];
-                            $result = mysql_query("INSERT INTO db_eventi (evento, data_inizio, ora, link, circolare_allegata) VALUES ('$testo', '$data_inizio', '$ora', '$evento_link', '$numero_circolare')");
+                            $result = $mysqli->query("INSERT INTO db_eventi (evento, data_inizio, ora, link, circolare_allegata) VALUES ('$testo', '$data_inizio', '$ora', '$evento_link', '$numero_circolare')");
 
                             $add_evento = squarecandy_add_to_gcal($testo, $data_inizio.' '.$ora);
 
@@ -793,9 +786,9 @@
                             $message = "\xF0\x9F\x93\x86 <b>" . $data_inizio . " - " . $data_fine . "</b>\n";
                             $message.= "\xE2\x9C\x8F $testo \n";
                             if (!is_null($circolare_allegata))  $keyboard[] = array(array("text" => "\xF0\x9F\x93\x8E Circolare N. $numero_circolare", "callback_data" => "circolare://$numero_circolare"));
-                            $testo = mysql_real_escape_string($testo);
+                            $testo = $mysqli->real_escape_string($testo);
                             $evento_link = $evento['link'];
-                            $result = mysql_query("INSERT INTO db_eventi (evento, data_inizio, data_fine, link, circolare_allegata) VALUES ('$testo', '$data_inizio', '$data_fine', '$evento_link', '$numero_circolare')");
+                            $result = $mysqli->query("INSERT INTO db_eventi (evento, data_inizio, data_fine, link, circolare_allegata) VALUES ('$testo', '$data_inizio', '$data_fine', '$evento_link', '$numero_circolare')");
                             
                             $add_evento = squarecandy_add_to_gcal($testo, $data_inizio, $data_fine);
 
@@ -810,6 +803,8 @@
                     }
                 }
             }
+
+            $mysqli->close();
             ?>
       </div>
    </body>
