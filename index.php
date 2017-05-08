@@ -131,12 +131,31 @@
                 if ($response) 
                 {
                     $httpcode = curl_getinfo($curlInit, CURLINFO_HTTP_CODE);
+                    $info = curl_getinfo($curlInit);
+                    $time = $info['total_time'];
                     curl_close($curlInit);
                     if ($httpcode == 200)
-                    return true;
-                    else return false;
+                    {
+                        if ($time > 3)
+                        return 0;
+                        else return 1;
+                    }
+                    else return -1;
                 }
-                return false;
+                return -1;
+            }
+
+            function getMessageOnline($status)
+            {
+                if ($status == 1)
+                {
+                   return "\xF0\x9F\x94\xB5";
+                } else if ($status == -1) {
+                    return "\xF0\x9F\x94\xB4";
+                } else if ($status == 0)
+                {
+                    return "\xE2\x8F\xB3";
+                } else return "\xE2\x9D\x97";
             }
 
             register_shutdown_function("fatal_handler");
@@ -539,34 +558,17 @@
             
             sendChatAction($chat_id, TYPING);
             $message = "<b>Stato dei servizi scolastici:</b>\n";
-            $message .= "\xF0\x9F\x94\xB4 = Offline | \xF0\x9F\x94\xB5 = Online\n\n";
-           
-            if (isOnline("https://web.spaggiari.eu/home/app/default/login.php"))
-            {
-                $message.= "\xF0\x9F\x94\xB5";
-            } else {
-                $message .= "\xF0\x9F\x94\xB4";
-            }
+            $message .= "\xF0\x9F\x94\xB4 = Offline | \xF0\x9F\x94\xB5 = Online | \xE2\x8F\xB3 = Rallentato\n\n";
+            
+            $icon = getMessageOnline(isOnline("https://web.spaggiari.eu/auth/app/default/AuthApi3.php?a=aLoginPwd"));
+            $message .=  $icon .= "\tRegistro elettronico\n";
 
-             $message .= "\tRegistro elettronico\n";
+            $icon = getMessageOnline(isOnline("https://elearning.itis.jesi.an.it/login/index.php"));
+            $message .= $icon .= "\tMoodle\n";
 
-            if (isOnline("https://elearning.itis.jesi.an.it/login/index.php"))
-            {
-                $message.= "\xF0\x9F\x94\xB5";
-            } else {
-                $message .= "\xF0\x9F\x94\xB4";
-            }
+            $icon = getMessageOnline(isOnline("https://www.itismarconi-jesi.gov.it/"));
+            $message .= $icon .= "\tSito della scuola\n";
 
-            $message .= "\tMoodle\n";
-
-            if (isOnline("https://www.itismarconi-jesi.gov.it/"))
-            {
-                $message.= "\xF0\x9F\x94\xB5";
-            } else {
-                $message .= "\xF0\x9F\x94\xB4";
-            }
-             
-             $message .= "\tSito della scuola\n";
              sendMessage($chat_id, $message);
              updateLastCommand($chat_id, NULL);
             } else if ($message == "/cancella" || $message == "/cancella@itismarconijesibot") {
