@@ -136,7 +136,7 @@
                     curl_close($curlInit);
                     if ($httpcode == 200)
                     {
-                        if ($time > 3)
+                        if ($time > 2)
                         return 0;
                         else return 1;
                     }
