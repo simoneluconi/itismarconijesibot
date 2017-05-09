@@ -55,47 +55,54 @@
                 curl_close($curl);
                 return $content;
             }
+
+            function getChat($chat_id) {
+                return Download_Html(Telegram . "/getChat?chat_id=$chat_id");
+            }
+
             function sendDocument($chat_id, $document, $caption) {
-                file_get_contents(Telegram . "/sendDocument?chat_id=$chat_id&document=$document&caption=" . urlencode($caption));
+                if (sendAction(Telegram . "/sendDocument?chat_id=$chat_id&document=$document&caption=" . urlencode($caption)) == 403)
+                    deleteUser($chat_id);
             }
             
             function sendMessage($chat_id, $message) {
-                file_get_contents(Telegram . "/sendMessage?chat_id=$chat_id&text=" . urlencode($message) . "&parse_mode=HTML");
+                if(sendAction(Telegram . "/sendMessage?chat_id=$chat_id&text=" . urlencode($message) . "&parse_mode=HTML") == 403)
+                    deleteUser($chat_id);
             }
             
             function sendPhoto($chat_id, $link) {
-                file_get_contents(Telegram . "/sendPhoto?chat_id=$chat_id&photo=" . urlencode($link));
+                sendAction(Telegram . "/sendPhoto?chat_id=$chat_id&photo=" . urlencode($link));
             }
 
             function sendChatAction($chat_id, $action) {
-                file_get_contents(Telegram . "/sendChatAction?chat_id=$chat_id&action=$action");
+                sendAction(Telegram . "/sendChatAction?chat_id=$chat_id&action=$action");
             }
             
             function remove_keyboard($chat_id, $message) {
                 $resp = array("remove_keyboard" => true);
                 $reply = json_encode($resp);
-                file_get_contents(Telegram . "/sendMessage?chat_id=$chat_id&text=" . urlencode($message) . "&reply_markup=" . urlencode($reply) . "&parse_mode=HTML");
+                sendAction(Telegram . "/sendMessage?chat_id=$chat_id&text=" . urlencode($message) . "&reply_markup=" . urlencode($reply) . "&parse_mode=HTML");
             }
             function sendKeyboard($chat_id, $message, $keyboard) {
                 $resp = array("keyboard" => $keyboard, "resize_keyboard" => true, "one_time_keyboard" => true);
                 $reply = json_encode($resp);
-                file_get_contents(Telegram . "/sendMessage?chat_id=$chat_id&text=" . urlencode($message) . "&reply_markup=" . urlencode($reply) . "&parse_mode=HTML");
+                sendAction(Telegram . "/sendMessage?chat_id=$chat_id&text=" . urlencode($message) . "&reply_markup=" . urlencode($reply) . "&parse_mode=HTML");
             }
 
             function sendInlineKeyboard($chat_id, $message, $keyboard) {
                 $resp = array("inline_keyboard" => $keyboard);
                 $reply = json_encode($resp);
-                file_get_contents(Telegram . "/sendMessage?chat_id=$chat_id&text=" . urlencode($message) . "&reply_markup=".urlencode($reply) . "&parse_mode=HTML");
+                sendAction(Telegram . "/sendMessage?chat_id=$chat_id&text=" . urlencode($message) . "&reply_markup=".urlencode($reply) . "&parse_mode=HTML");
             }
 
             function sendInlineKeyboardwithDocument($chat_id, $document, $caption, $keyboard) {
                 $resp = array("inline_keyboard" => $keyboard);
                 $reply = json_encode($resp);
-                file_get_contents(Telegram . "/sendDocument?chat_id=$chat_id&document=$document&caption=" . urlencode($caption). "&reply_markup=".urlencode($reply));
+                sendAction(Telegram . "/sendDocument?chat_id=$chat_id&document=$document&caption=" . urlencode($caption). "&reply_markup=".urlencode($reply));
             }
 
             function answerCallbackQuery($callback_id) {
-                file_get_contents(Telegram . "/answerCallbackQuery?callback_query_id=$callback_id");
+                sendAction(Telegram . "/answerCallbackQuery?callback_query_id=$callback_id");
             }
 
             function errCircolari($chat_id) {
@@ -143,6 +150,20 @@
                     else return -1;
                 }
                 return -1;
+            }
+
+            function sendAction($url)
+            {
+                $useragent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.1) Gecko/20061204 Firefox/2.0.0.1";
+                $curl = curl_init();
+                // set user agent
+                curl_setopt($curl, CURLOPT_USERAGENT, $useragent);
+                curl_setopt($curl, CURLOPT_URL, $url);
+                curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+                curl_exec($curl);
+                $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+                curl_close($curl);
+                return $httpcode;
             }
 
             function getMessageOnline($status)
@@ -207,6 +228,14 @@
                 $row = $result->fetch_assoc();
                 $mysqli->close();
                 return $row['last_command'];
+            }
+
+            function deleteUser($chat_id)
+            {            
+                $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+                $result = $mysqli->query("DELETE from db_bot_telegram_itis where chat_id='$chat_id'");
+                $result = $mysqli->query("INSERT INTO db_deleted (chat_id) VALUES ('$chat_id')");
+                $mysqli->close();
             }
 
             function trovaAllegatiPerCircolare($titolo)
@@ -588,7 +617,7 @@
                 while ($row = $result->fetch_assoc()) {
                     $utenti[] = $row;
                 }
-            
+
                 $n_users = count($utenti);
 
                 ?>  
@@ -806,6 +835,66 @@
                 }
             }
 
+
+            if(isset($_GET["usr"]))
+            {
+                $usr = $_GET["usr"];
+                if ($usr == SHOW_USER)
+                {
+                    $tutti_utenti = array();
+
+                    foreach ($utenti as & $utente) {
+                        $tutti_utenti[] = $utente['chat_id'];
+                    }
+
+                    $result = $mysqli->query("SELECT * FROM db_deleted");
+                    $deleted = array();
+                    while ($row = $result->fetch_assoc()) {
+                        $deleted[] = $row['chat_id'];
+                        $tutti_utenti[] = $row['chat_id'];
+                    }
+
+                    echo "<br><br>\n";
+                    echo "<table class=\"centered\">\n";
+                    echo "<thead>\n";
+                    echo "<tr>\n";
+                    echo "<th>ID</th>\n";
+                    echo "<th>Username</th>\n";
+                    echo "<th>Nome</th>\n";
+                    echo "<th>Cognome</th>\n";
+                    echo "<th>Stato</th>\n";
+                    echo "</tr>\n";
+                    echo "</thead>\n";
+                    echo "<tbody>\n";
+
+                    
+                    foreach ($tutti_utenti as & $id) {
+                        if (intval($id) > 0) {
+                            $info = json_decode(getChat($id));
+                            $info = $info->{'result'};
+
+                            $first_name = $info->{'first_name'};
+                            $last_name = $info->{'last_name'};
+                            $user_name = $info->{'username'};
+                            $status = array_search($id, $deleted);
+
+                            echo "<tr>\n";
+                            echo "<td>$id</td>\n";
+                            echo "<td>$user_name</td>\n";
+                            echo "<td>$first_name</td>\n";
+                            echo "<td>$last_name</td>\n";
+                            if ($status !== false)
+                                echo "<td>❌</td>\n";
+                            else echo "<td>✔️</td>\n";
+
+                            echo "</tr>";
+                        }
+                }
+
+                  echo "</tbody>\n";
+                  echo "</table>\n";
+            }
+          }
             $mysqli->close();
             ?>
       </div>
