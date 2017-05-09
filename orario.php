@@ -60,7 +60,7 @@
    }
    } else if ($classe) {
        $classe = str_replace(' ', '%20', $classe);
-       $url = "http://simoneluconi.altervista.org/telegram/itisbot/files/orario/classi/Classe_$classe.jpg";
+       $url = "https://www.simoneluconi.com/telegram/itisbot/files/orario/classi/Classe_$classe.jpg";
        if (is_url_exist($url))
        {
            $array = array("link" => $url);
@@ -75,7 +75,7 @@
    else if ($laboratorio)
    {   
        $laboratorio = str_replace(' ', '%20', $laboratorio);
-        $url = "http://simoneluconi.altervista.org/telegram/itisbot/files/orario/laboratori/$laboratorio.jpg";
+        $url = "https://www.simoneluconi.com/telegram/itisbot/files/orario/laboratori/$laboratorio.jpg";
        if (is_url_exist($url))
        {
            $array = array("link" => $url);
@@ -90,7 +90,7 @@
    else if ($docente)
    {   
        $docente = str_replace(' ', '%20', $docente);
-        $url = "http://simoneluconi.altervista.org/telegram/itisbot/files/orario/docenti/$docente.jpg";
+        $url = "https://www.simoneluconi.com/telegram/itisbot/files/orario/docenti/$docente.jpg";
        if (is_url_exist($url))
        {
            $array = array("link" => $url);
