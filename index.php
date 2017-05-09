@@ -36,7 +36,7 @@
             include 'config.php';
             define("Telegram", "https://api.telegram.org/bot" . TELEGRAM_TOKEN);
             define("ITIS_URL", "https://www.itismarconi-jesi.gov.it");
-            define("HOST_URL", "http://simoneluconi.altervista.org");
+            define("HOST_URL", "https://www.simoneluconi.com");
             define("TYPING", "typing");
             define("UPLOAD_PHOTO", "upload_photo");
             define("UPLOAD_DOCUMENT", "upload_document");
