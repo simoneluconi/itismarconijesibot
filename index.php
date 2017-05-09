@@ -359,7 +359,8 @@
                 } 
                 else if ($message == "/start" || $message == "/start@itismarconijesibot") {
                 sendChatAction($chat_id, TYPING);
-                $result = $mysqli->query("SELECT * FROM db_bot_telegram_itis where chat_id='$chat_id'", $link);
+                $result = $mysqli->query("DELETE FROM db_deleted where chat_id='$chat_id'");
+                $result = $mysqli->query("SELECT * FROM db_bot_telegram_itis where chat_id='$chat_id'");
                 $num_rows = $result->num_rows;
                 if ($num_rows == 0) {
                     $result = $mysqli->query("INSERT INTO db_bot_telegram_itis (chat_id) VALUES ('$chat_id')");
