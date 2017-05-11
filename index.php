@@ -360,15 +360,26 @@
                 } 
                 else if ($message == "/start" || $message == "/start@itismarconijesibot") {
                 sendChatAction($chat_id, TYPING);
-                $result = $mysqli->query("DELETE FROM db_deleted where chat_id='$chat_id'");
-                $result = $mysqli->query("SELECT * FROM db_bot_telegram_itis where chat_id='$chat_id'");
+
+                $result = $mysqli->query("SELECT * FROM db_deleted where chat_id='$chat_id'");
                 $num_rows = $result->num_rows;
-                if ($num_rows == 0) {
-                    $result = $mysqli->query("INSERT INTO db_bot_telegram_itis (chat_id) VALUES ('$chat_id')");
-                    if ($result == 1) sendMessage($chat_id, "Benvenuto! Da questo momento iniziarai a ricevere notifiche di nuove circolari, eventi e altre comunicazioni \xF0\x9F\x98\x89");
-                    else sendMessage($chat_id, "Ops...c'è stato un problema nell'avviare il bot \xF0\x9F\x98\x94");
-                } else sendMessage($chat_id, "Hei $user_name mi ricordo di te! Bentornato! \xF0\x9F\x98\x83");
-                 updateLastCommand($chat_id, NULL);
+                if ($num_rows > 0) {
+                    sendMessage($chat_id, "Hei $user_name mi ricordo di te! Bentornato! \xF0\x9F\x98\x83");
+                    $mysqli->query("DELETE FROM db_deleted where chat_id='$chat_id'");
+                    $mysqli->query("INSERT INTO db_bot_telegram_itis (chat_id) VALUES ('$chat_id')");
+                }
+                else {
+                    $result = $mysqli->query("SELECT * FROM db_bot_telegram_itis where chat_id='$chat_id'");
+                    $num_rows = $result->num_rows;
+                    if ($num_rows == 0) {
+                        $result = $mysqli->query("INSERT INTO db_bot_telegram_itis (chat_id) VALUES ('$chat_id')");
+                        if ($result == 1) sendMessage($chat_id, "Benvenuto! Da questo momento iniziarai a ricevere notifiche di nuove circolari, eventi e altre comunicazioni \xF0\x9F\x98\x89");
+                        else sendMessage($chat_id, "Ops...c'è stato un problema nell'avviare il bot \xF0\x9F\x98\x94");
+                    } else {
+                        sendMessage($chat_id, "Sei già stato aggiunto \xF0\x9F\x98\x85");
+                        updateLastCommand($chat_id, NULL);
+                    }
+                }
             } else if ($message == "/orario" || $message == "/orario@itismarconijesibot") {
                 sendChatAction($chat_id, TYPING);
                 $array = array(array("Studenti"), array("Docenti"), array("Laboratori"), array("Recupero/Potenziamento"));
