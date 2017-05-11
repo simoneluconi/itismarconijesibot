@@ -594,9 +594,11 @@
             $icon = getMessageOnline(isOnline("https://web.spaggiari.eu/auth/app/default/AuthApi3.php?a=aLoginPwd"));
             $message .=  $icon .= "\tRegistro elettronico\n";
 
+            sendChatAction($chat_id, TYPING);
             $icon = getMessageOnline(isOnline("https://elearning.itis.jesi.an.it/login/index.php"));
             $message .= $icon .= "\tMoodle\n";
 
+            sendChatAction($chat_id, TYPING);
             $icon = getMessageOnline(isOnline("https://www.itismarconi-jesi.gov.it/"));
             $message .= $icon .= "\tSito della scuola\n";
 
@@ -836,7 +838,6 @@
                     }
                 }
             }
-
 
             if(isset($_GET["usr"]))
             {
