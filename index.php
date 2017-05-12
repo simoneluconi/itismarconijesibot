@@ -602,7 +602,7 @@
             $message = "<b>Stato dei servizi scolastici:</b>\n";
             $message .= "\xF0\x9F\x94\xB4 = Offline | \xF0\x9F\x94\xB5 = Online | \xE2\x8F\xB3 = Rallentato\n\n";
             
-            $icon = getMessageOnline(isOnline("https://web.spaggiari.eu/auth/app/default/AuthApi3.php?a=aLoginPwd"));
+            $icon = getMessageOnline(isOnline("https://web.spaggiari.eu/auth/app/default/AuthApi4.php?a=aLoginPwd"));
             $message .=  $icon .= "\tRegistro elettronico\n";
 
             sendChatAction($chat_id, TYPING);
