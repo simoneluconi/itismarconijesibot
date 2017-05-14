@@ -325,35 +325,37 @@
             
                 if (strpos($last_command, 'Studenti') !== false)
                 {
-                sendChatAction($chat_id, UPLOAD_PHOTO);
                  $tmp = explode(" ", $message);
                 $url = "/files/orario/orario.php";
                 $response = json_decode(file_get_contents(HOST_URL."/telegram/itisbot/orario.php?classe=".$tmp[1]));
                 if ($response->link) {
+                    sendChatAction($chat_id, TYPING);
                     remove_keyboard($chat_id, "\xF0\x9F\x93\xA9 Ti invio l'orario della <b>classe ". $tmp[1]."</b>");
+                    sendChatAction($chat_id, UPLOAD_PHOTO);
                     sendPhoto($chat_id, $response->link);
                 } else remove_keyboard($chat_id, "Mi dispiace, non ho trovato l'orario della <b>classe ". $tmp[1])."</b> \xF0\x9F\x98\x94";
                 updateLastCommand($chat_id, NULL);
                 } else if (strpos($last_command, 'Laboratori') !== false)
                 {
-                    sendChatAction($chat_id, UPLOAD_PHOTO);
+                    sendChatAction($chat_id, TYPING);
                     $tmp = str_replace(' ', '%20' , $message);
                     $url = "/files/orario/orario.php";
                     $response = json_decode(file_get_contents(HOST_URL."/telegram/itisbot/orario.php?laboratorio=".$tmp));
                 if ($response->link) {
                     remove_keyboard($chat_id, "\xF0\x9F\x93\xA9	Ti invio l'orario del <b>$message</b>");
+                    sendChatAction($chat_id, UPLOAD_PHOTO);
                     sendPhoto($chat_id, $response->link);
                 } else remove_keyboard($chat_id, "Mi dispiace, non ho trovato l'orario del <b>$message</b> \xF0\x9F\x98\x94");
                     updateLastCommand($chat_id, NULL);                
                 } else if (strpos($last_command, 'Docenti') !== false)
                 {
-                    sendChatAction($chat_id, UPLOAD_PHOTO);
+                    sendChatAction($chat_id, TYPING);
                     $tmp = str_replace(' ', '%20' , $message);
                     $url = "/files/orario/orario.php";
                     $response = json_decode(file_get_contents(HOST_URL."/telegram/itisbot/orario.php?docente=".$tmp));
                 if ($response->link) {
-                    sendChatAction($chat_id, UPLOAD_PHOTO);
                     remove_keyboard($chat_id, "\xF0\x9F\x93\xA9	Ti invio l'orario del docente <b>$message</b>");
+                    sendChatAction($chat_id, UPLOAD_PHOTO);
                     sendPhoto($chat_id, $response->link);
                 } else remove_keyboard($chat_id, "Mi dispiace, non ho trovato l'orario del docente <b>$message</b> \xF0\x9F\x98\x94");
                     updateLastCommand($chat_id, NULL);
