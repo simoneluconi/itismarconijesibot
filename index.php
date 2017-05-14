@@ -634,18 +634,56 @@
                 while ($row = $result->fetch_assoc()) {
                     $utenti[] = $row;
                 }
-
                 $n_users = count($utenti);
+
+                $result = $mysqli->query("SELECT * FROM db_deleted");
+                $n_deleted_users =  $result->num_rows;
+
+                $result = $mysqli->query("SELECT * FROM db_circolari");
+                $n_circolari=  $result->num_rows;
+
+                $result = $mysqli->query("SELECT * FROM db_eventi");
+                $n_eventi =  $result->num_rows;
 
                 ?>  
                 <div class="row">
-                <div class="col s6">
+
+                <div class="col s3">
                 <div class="card-panel">
                 <?php
-                echo "<span class=\"blue-text text-darken-2\">Utenti registrati: <b>$n_users</b>";
+                echo "<span class=\"green-text text-darken-2\">Utenti registrati: <b>$n_users</b>";
                 ?>
                 </span>
                 </div>
+                </div>
+
+                <div class="col s3">
+                <div class="card-panel">
+                <?php
+                echo "<span class=\"red-text text-darken-2\">Utenti cancellati: <b>$n_deleted_users</b>";
+                ?>
+                </span>
+                </div>
+                </div>
+
+                <div class="col s3">
+                <div class="card-panel">
+                <?php
+                echo "<span class=\"blue-text text-darken-2\">Numero circolari: <b>$n_circolari</b>";
+                ?>
+                </span>
+                </div>
+                </div>
+
+                <div class="col s3">
+                <div class="card-panel">
+                <?php
+                echo "<span class=\"blue-text text-darken-2\">Numero eventi: <b>$n_eventi</b>";
+                ?>
+                </span>
+                </div>
+                </div>
+
                 </div>
             
                 <table class="centered">
