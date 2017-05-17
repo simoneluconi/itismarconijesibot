@@ -106,7 +106,7 @@
             }
 
             function errCircolari($chat_id) {
-                sendMessage($chat_id, "\xE2\x9D\x97 Formato del messaggio non valido!");
+                remove_keyboard($chat_id, "\xE2\x9D\x97 Formato del messaggio non valido!");
                 sendMessage($chat_id, message_circolari);
             }
             function getLinkEvento($link_evento) {
@@ -517,7 +517,7 @@
                                     $circolari_keyboard[] = array($row['titolo']);
                                 }
                             }
-                            if (count($circolari_keyboard) == 0) sendMessage($chat_id, "Non ho trovato nessuna circolare con nome $cerca \xF0\x9F\x98\x94");
+                            if (count($circolari_keyboard) == 0) remove_keyboard($chat_id, "Non ho trovato nessuna circolare con nome $cerca \xF0\x9F\x98\x94");
                             else {
                                 $n_circolari = count($circolari_keyboard);
                                 if ($n_circolari == 1) sendKeyboard($chat_id, "\xF0\x9F\x93\x91	Ho trovato una circolare: ", $circolari_keyboard);
@@ -530,11 +530,11 @@
                         $result = $mysqli->query("SELECT * FROM db_circolari WHERE titolo LIKE '$cerca%'");
                         $num_rows = $result->num_rows;
                         if ($num_rows == 0) {
-                            sendMessage($chat_id, "Mi dispiace, non ho trovato nessuna circolare numero $numero \xF0\x9F\x98\x94");
+                            remove_keyboard($chat_id, "Mi dispiace, non ho trovato nessuna circolare numero $numero \xF0\x9F\x98\x94");
                         } else {
                             sendChatAction($chat_id, UPLOAD_DOCUMENT);
-                            if ($num_rows == 1) sendMessage($chat_id, "\xF0\x9F\x93\x91	Ho trovato questa circolare:");
-                            else sendMessage($chat_id, "\xF0\x9F\x93\x91 Ho trovato queste circolari:");
+                            if ($num_rows == 1) remove_keyboard($chat_id, "\xF0\x9F\x93\x91	Ho trovato questa circolare:");
+                            else remove_keyboard($chat_id, "\xF0\x9F\x93\x91 Ho trovato queste circolari:");
                             while ($row = $result->fetch_assoc()) {
                                 inviaCircolare($chat_id, $row);
                             }
