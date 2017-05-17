@@ -486,7 +486,8 @@
                 updateLastCommand($chat_id, NULL);
             } else if ($message == "/circolari" || $message == "/circolari@itismarconijesibot") {
                 sendChatAction($chat_id, TYPING);
-                sendMessage($chat_id, message_circolari);
+                $keyboard = array(); //Vuoto perchè viene già aggiunto dal metodo
+                sendKeyboard($chat_id, message_circolari, $keyboard);
             } else if ((strpos(strtolower($message), 'circolare') !== false ) && (strpos($last_command, '/circolari') !== false)) {
                 sendChatAction($chat_id, TYPING);
                 $tmp = explode(" ", $message);
