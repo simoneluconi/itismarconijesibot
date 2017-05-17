@@ -803,9 +803,16 @@
                 foreach ($rows as $row) {
                     if ($row->nodeValue != "Nessun evento") {
                         $data_inizio = $row->getElementsByTagName('span')->item(0)->nodeValue;
-                        $data_fine_ora = $row->getElementsByTagName('span')->item(1)->nodeValue;
-                        $testo = $row->getElementsByTagName('span')->item(2)->nodeValue;
-                        $link_evento = $row->getElementsByTagName('span')->item(2)->getElementsByTagName('a')->item(0)->getattribute('onclick');
+                        $p_link = $row->getElementsByTagName('span')->length;
+                        if ($p_link > 2) {
+                            $data_fine_ora = $row->getElementsByTagName('span')->item(1)->nodeValue;
+                            $testo = $row->getElementsByTagName('span')->item(2)->nodeValue;
+                            $link_evento = $row->getElementsByTagName('span')->item(2)->getElementsByTagName('a')->item(0)->getattribute('onclick');
+                        } else {
+                            $data_fine_ora = $data_inizio;
+                            $testo = $row->getElementsByTagName('span')->item(1)->nodeValue;
+                            $link_evento = $row->getElementsByTagName('span')->item(1)->getElementsByTagName('a')->item(0)->getattribute('onclick');
+                        }
                         $link_evento = getLinkEvento($link_evento);
                         echo "<tr>\n<td><a href='$link_evento' target=\"_blank\">$testo </a></td>\n<td> $data_inizio - $data_fine_ora </td>\n</tr>\n";
                         $tag_array;
