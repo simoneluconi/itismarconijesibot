@@ -83,6 +83,7 @@
                 sendAction(Telegram . "/sendMessage?chat_id=$chat_id&text=" . urlencode($message) . "&reply_markup=" . urlencode($reply) . "&parse_mode=HTML");
             }
             function sendKeyboard($chat_id, $message, $keyboard) {
+                $keyboard[] = array("❌ Annulla");
                 $resp = array("keyboard" => $keyboard, "resize_keyboard" => true, "one_time_keyboard" => true);
                 $reply = json_encode($resp);
                 sendAction(Telegram . "/sendMessage?chat_id=$chat_id&text=" . urlencode($message) . "&reply_markup=" . urlencode($reply) . "&parse_mode=HTML");
@@ -321,19 +322,23 @@
                     }
 
                 }
-            
-                if (strpos($last_command, 'Studenti') !== false)
+
+                if ($message == "❌ Annulla")
                 {
-                 $tmp = explode(" ", $message);
-                $url = "/files/orario/orario.php";
-                $response = json_decode(file_get_contents(HOST_URL."/telegram/itisbot/orario.php?classe=".$tmp[1]));
-                if ($response->link) {
-                    sendChatAction($chat_id, TYPING);
-                    remove_keyboard($chat_id, "\xF0\x9F\x93\xA9 Ti invio l'orario della <b>classe ". $tmp[1]."</b>");
-                    sendChatAction($chat_id, UPLOAD_PHOTO);
-                    sendPhoto($chat_id, $response->link);
-                } else remove_keyboard($chat_id, "Mi dispiace, non ho trovato l'orario della <b>classe ". $tmp[1])."</b> \xF0\x9F\x98\x94";
-                updateLastCommand($chat_id, NULL);
+                    remove_keyboard($chat_id, "Ultimo comando cancellato \xF0\x9F\x98\x89");
+                    updateLastCommand($chat_id, NULL);
+                } else if (strpos($last_command, 'Studenti') !== false)
+                {
+                    $tmp = explode(" ", $message);
+                    $url = "/files/orario/orario.php";
+                    $response = json_decode(file_get_contents(HOST_URL."/telegram/itisbot/orario.php?classe=".$tmp[1]));
+                    if ($response->link) {
+                        sendChatAction($chat_id, TYPING);
+                        remove_keyboard($chat_id, "\xF0\x9F\x93\xA9 Ti invio l'orario della <b>classe ". $tmp[1]."</b>");
+                        sendChatAction($chat_id, UPLOAD_PHOTO);
+                        sendPhoto($chat_id, $response->link);
+                    } else remove_keyboard($chat_id, "Mi dispiace, non ho trovato l'orario della <b>classe ". $tmp[1])."</b> \xF0\x9F\x98\x94";
+                        updateLastCommand($chat_id, NULL);
                 } else if (strpos($last_command, 'Laboratori') !== false)
                 {
                     sendChatAction($chat_id, TYPING);
@@ -344,8 +349,8 @@
                     remove_keyboard($chat_id, "\xF0\x9F\x93\xA9	Ti invio l'orario del <b>$message</b>");
                     sendChatAction($chat_id, UPLOAD_PHOTO);
                     sendPhoto($chat_id, $response->link);
-                } else remove_keyboard($chat_id, "Mi dispiace, non ho trovato l'orario del <b>$message</b> \xF0\x9F\x98\x94");
-                    updateLastCommand($chat_id, NULL);                
+                    } else remove_keyboard($chat_id, "Mi dispiace, non ho trovato l'orario del <b>$message</b> \xF0\x9F\x98\x94");
+                        updateLastCommand($chat_id, NULL);                
                 } else if (strpos($last_command, 'Docenti') !== false)
                 {
                     sendChatAction($chat_id, TYPING);
@@ -356,31 +361,31 @@
                     remove_keyboard($chat_id, "\xF0\x9F\x93\xA9	Ti invio l'orario del docente <b>$message</b>");
                     sendChatAction($chat_id, UPLOAD_PHOTO);
                     sendPhoto($chat_id, $response->link);
-                } else remove_keyboard($chat_id, "Mi dispiace, non ho trovato l'orario del docente <b>$message</b> \xF0\x9F\x98\x94");
-                    updateLastCommand($chat_id, NULL);
+                    } else remove_keyboard($chat_id, "Mi dispiace, non ho trovato l'orario del docente <b>$message</b> \xF0\x9F\x98\x94");
+                        updateLastCommand($chat_id, NULL);
                 } 
                 else if ($message == "/start" || $message == "/start@itismarconijesibot") {
-                sendChatAction($chat_id, TYPING);
+                    sendChatAction($chat_id, TYPING);
 
-                $result = $mysqli->query("SELECT * FROM db_deleted where chat_id='$chat_id'");
-                $num_rows = $result->num_rows;
-                if ($num_rows > 0) {
-                    sendMessage($chat_id, "Hei $user_name mi ricordo di te! Bentornato! \xF0\x9F\x98\x83");
-                    $mysqli->query("DELETE FROM db_deleted where chat_id='$chat_id'");
-                    $mysqli->query("INSERT INTO db_bot_telegram_itis (chat_id) VALUES ('$chat_id')");
-                }
-                else {
-                    $result = $mysqli->query("SELECT * FROM db_bot_telegram_itis where chat_id='$chat_id'");
+                    $result = $mysqli->query("SELECT * FROM db_deleted where chat_id='$chat_id'");
                     $num_rows = $result->num_rows;
-                    if ($num_rows == 0) {
-                        $result = $mysqli->query("INSERT INTO db_bot_telegram_itis (chat_id) VALUES ('$chat_id')");
-                        if ($result == 1) sendMessage($chat_id, "Benvenuto! Da questo momento iniziarai a ricevere notifiche di nuove circolari, eventi e altre comunicazioni \xF0\x9F\x98\x89");
-                        else sendMessage($chat_id, "Ops...c'è stato un problema nell'avviare il bot \xF0\x9F\x98\x94");
-                    } else {
-                        sendMessage($chat_id, "Sei già stato aggiunto \xF0\x9F\x98\x85");
-                        updateLastCommand($chat_id, NULL);
+                    if ($num_rows > 0) {
+                        sendMessage($chat_id, "Hei $user_name mi ricordo di te! Bentornato! \xF0\x9F\x98\x83");
+                        $mysqli->query("DELETE FROM db_deleted where chat_id='$chat_id'");
+                        $mysqli->query("INSERT INTO db_bot_telegram_itis (chat_id) VALUES ('$chat_id')");
                     }
-                }
+                    else {
+                        $result = $mysqli->query("SELECT * FROM db_bot_telegram_itis where chat_id='$chat_id'");
+                        $num_rows = $result->num_rows;
+                        if ($num_rows == 0) {
+                            $result = $mysqli->query("INSERT INTO db_bot_telegram_itis (chat_id) VALUES ('$chat_id')");
+                            if ($result == 1) sendMessage($chat_id, "Benvenuto! Da questo momento iniziarai a ricevere notifiche di nuove circolari, eventi e altre comunicazioni \xF0\x9F\x98\x89");
+                            else sendMessage($chat_id, "Ops...c'è stato un problema nell'avviare il bot \xF0\x9F\x98\x94");
+                        } else {
+                            sendMessage($chat_id, "Sei già stato aggiunto \xF0\x9F\x98\x85");
+                            updateLastCommand($chat_id, NULL);
+                        }
+                    }
             } else if ($message == "/orario" || $message == "/orario@itismarconijesibot") {
                 sendChatAction($chat_id, TYPING);
                 $array = array(array("Studenti"), array("Docenti"), array("Laboratori"), array("Recupero/Potenziamento"));
@@ -616,11 +621,6 @@
 
              sendMessage($chat_id, $message);
              updateLastCommand($chat_id, NULL);
-            } else if ($message == "/cancella" || $message == "/cancella@itismarconijesibot") {
-                if ($last_command) {
-                    remove_keyboard($chat_id, "Ultimo comando cancellato \xF0\x9F\x98\x89");
-                    updateLastCommand($chat_id, NULL);
-                } else sendMessage($chat_id, "Nessun comando da cancellare \xF0\x9F\x98\x85");
             } else if (!isset($updates['callback_query']) && !is_null($message))
             { 
                 remove_keyboard($chat_id, "Mi dispiace, <b>$message</b> non è un comando valido.");
