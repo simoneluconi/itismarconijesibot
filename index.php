@@ -31,7 +31,6 @@
       <div class="container">
          <?php
             include 'simple_html_dom.php';
-            include 'addCal.php';
             include 'random.php';
             include 'config.php';
             define("Telegram", "https://api.telegram.org/bot" . TELEGRAM_TOKEN);
@@ -864,10 +863,7 @@
                             $evento_link = $evento['link'];
                             $result = $mysqli->query("INSERT INTO db_eventi (evento, data_inizio, ora, link, circolare_allegata) VALUES ('$testo', '$data_inizio', '$ora', '$evento_link', '$numero_circolare')");
 
-                            $add_evento = squarecandy_add_to_gcal($testo, $data_inizio.' '.$ora);
-
                             $keyboard[] = array(array("text" => "\xF0\x9F\x8C\x8D Guarda nel sito", "url" => $evento_link));
-                            $keyboard[] = array(array("text"=> "\xF0\x9F\x93\x8C Aggiungi al calendario", "url"  => $add_evento));
 
                             foreach ($utenti as & $utente) {
                                 sendInlineKeyboard($utente['chat_id'], $message, $keyboard);
