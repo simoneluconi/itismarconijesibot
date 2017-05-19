@@ -1,8 +1,12 @@
 <?php
+
+    include "config.php";
    $tipo_orario = $_GET['tipo_orario'];
    $classe = $_GET['classe'];
    $laboratorio = $_GET['laboratorio'];
    $docente = $_GET['docente'];
+
+   $HOST_URL = HOST_URL();
    
    function is_url_exist($url){
        $ch = curl_init($url);    
@@ -60,7 +64,7 @@
    }
    } else if ($classe) {
        $classe = str_replace(' ', '%20', $classe);
-       $url = "https://www.simoneluconi.com/telegram/itisbot/files/orario/classi/Classe_$classe.jpg";
+       $url = "$HOST_URL/telegram/itisbot/files/orario/classi/Classe_$classe.jpg";
        if (is_url_exist($url))
        {
            $array = array("link" => $url);
@@ -75,7 +79,7 @@
    else if ($laboratorio)
    {   
        $laboratorio = str_replace(' ', '%20', $laboratorio);
-        $url = "https://www.simoneluconi.com/telegram/itisbot/files/orario/laboratori/$laboratorio.jpg";
+        $url = "$HOST_URL/telegram/itisbot/files/orario/laboratori/$laboratorio.jpg";
        if (is_url_exist($url))
        {
            $array = array("link" => $url);
@@ -90,7 +94,7 @@
    else if ($docente)
    {   
        $docente = str_replace(' ', '%20', $docente);
-        $url = "https://www.simoneluconi.com/telegram/itisbot/files/orario/docenti/$docente.jpg";
+        $url = "$HOST_URL/telegram/itisbot/files/orario/docenti/$docente.jpg";
        if (is_url_exist($url))
        {
            $array = array("link" => $url);

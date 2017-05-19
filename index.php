@@ -35,10 +35,11 @@
             include 'config.php';
             define("Telegram", "https://api.telegram.org/bot" . TELEGRAM_TOKEN);
             define("ITIS_URL", "https://www.itismarconi-jesi.gov.it");
-            define("HOST_URL", "https://www.simoneluconi.com");
             define("TYPING", "typing");
             define("UPLOAD_PHOTO", "upload_photo");
             define("UPLOAD_DOCUMENT", "upload_document");
+
+            $HOST_URL = HOST_URL();
 
             date_default_timezone_set('Europe/Rome');
             define("message_circolari", "\xF0\x9F\x94\x8D Puoi cercare circolari scrivendo ad esempio <b>\"Circolare 220\"</b>, <b>\"Circolare sciopero\"</b>, <b>\"Circolari di ieri\"</b>, <b>\"Circolari di oggi\"</b> o <b>\"Circolari del 4/03/17\"</b>.");
@@ -127,6 +128,8 @@
 
             function isOnline($domain) {
                 $curlInit = curl_init($domain);
+                $useragent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.1) Gecko/20061204 Firefox/2.0.0.1";
+                curl_setopt($curlInit, CURLOPT_USERAGENT, $useragent);
                 curl_setopt($curlInit,CURLOPT_CONNECTTIMEOUT,10);
                 curl_setopt($curlInit,CURLOPT_HEADER,true);
                 curl_setopt($curlInit,CURLOPT_NOBODY,true);
@@ -331,7 +334,7 @@
                 {
                     $tmp = explode(" ", $message);
                     $url = "/files/orario/orario.php";
-                    $response = json_decode(file_get_contents(HOST_URL."/telegram/itisbot/orario.php?classe=".$tmp[1]));
+                    $response = json_decode(file_get_contents($HOST_URL."/telegram/itisbot/orario.php?classe=".$tmp[1]));
                     if ($response->link) {
                         sendChatAction($chat_id, TYPING);
                         remove_keyboard($chat_id, "\xF0\x9F\x93\xA9 Ti invio l'orario della <b>classe ". $tmp[1]."</b>");
@@ -344,7 +347,7 @@
                     sendChatAction($chat_id, TYPING);
                     $tmp = str_replace(' ', '%20' , $message);
                     $url = "/files/orario/orario.php";
-                    $response = json_decode(file_get_contents(HOST_URL."/telegram/itisbot/orario.php?laboratorio=".$tmp));
+                    $response = json_decode(file_get_contents($HOST_URL."/telegram/itisbot/orario.php?laboratorio=".$tmp));
                 if ($response->link) {
                     remove_keyboard($chat_id, "\xF0\x9F\x93\xA9	Ti invio l'orario del <b>$message</b>");
                     sendChatAction($chat_id, UPLOAD_PHOTO);
@@ -356,7 +359,7 @@
                     sendChatAction($chat_id, TYPING);
                     $tmp = str_replace(' ', '%20' , $message);
                     $url = "/files/orario/orario.php";
-                    $response = json_decode(file_get_contents(HOST_URL."/telegram/itisbot/orario.php?docente=".$tmp));
+                    $response = json_decode(file_get_contents($HOST_URL."/telegram/itisbot/orario.php?docente=".$tmp));
                 if ($response->link) {
                     remove_keyboard($chat_id, "\xF0\x9F\x93\xA9	Ti invio l'orario del docente <b>$message</b>");
                     sendChatAction($chat_id, UPLOAD_PHOTO);
@@ -393,7 +396,7 @@
             } else if ($message == "Studenti" && (strpos($last_command, '/orario') !== false)) {
                 sendChatAction($chat_id, TYPING);
                 $url = "/files/orario/orario.php";
-                $response = json_decode(file_get_contents(HOST_URL."/telegram/itisbot/orario.php?tipo_orario=Studenti"));
+                $response = json_decode(file_get_contents($HOST_URL."/telegram/itisbot/orario.php?tipo_orario=Studenti"));
             
                 $array = array(); $row = array(); $count = 0;
                 foreach ($response as $classe)
@@ -412,7 +415,7 @@
             }  else if ($message == "Laboratori" && (strpos($last_command, '/orario') !== false)) {
                 sendChatAction($chat_id, TYPING);
                 $url = "/files/orario/orario.php";
-                $response = json_decode(file_get_contents(HOST_URL."/telegram/itisbot/orario.php?tipo_orario=Laboratori"));
+                $response = json_decode(file_get_contents($HOST_URL."/telegram/itisbot/orario.php?tipo_orario=Laboratori"));
             
                 $array = array(); $row = array(); $count = 0;
                 foreach ($response as $laboratorio)
@@ -429,7 +432,7 @@
             }  else if ($message == "Docenti" && (strpos($last_command, '/orario') !== false)) {
                 sendChatAction($chat_id, TYPING);
                 $url = "/files/orario/orario.php";
-                $response = json_decode(file_get_contents(HOST_URL."/telegram/itisbot/orario.php?tipo_orario=Docenti"));
+                $response = json_decode(file_get_contents($HOST_URL."/telegram/itisbot/orario.php?tipo_orario=Docenti"));
             
                 $array = array(); $row = array(); $count = 0;
                 foreach ($response as $docente)
@@ -644,8 +647,7 @@
 
                 $result = $mysqli->query("SELECT * FROM db_eventi");
                 $n_eventi =  $result->num_rows;
-
-                ?>  
+                ?>
                 <div class="row">
 
                 <div class="col s3">
