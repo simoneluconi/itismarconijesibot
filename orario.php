@@ -64,7 +64,7 @@
    }
    } else if ($classe) {
        $classe = str_replace(' ', '%20', $classe);
-       $url = "$HOST_URL/telegram/itisbot/files/orario/classi/Classe_$classe.jpg";
+       $url = "$HOST_URL/telegram/itismarconijesibot/files/orario/classi/Classe_$classe.jpg";
        if (is_url_exist($url))
        {
            $array = array("link" => $url);
@@ -79,7 +79,7 @@
    else if ($laboratorio)
    {   
        $laboratorio = str_replace(' ', '%20', $laboratorio);
-        $url = "$HOST_URL/telegram/itisbot/files/orario/laboratori/$laboratorio.jpg";
+        $url = "$HOST_URL/telegram/itismarconijesibot/files/orario/laboratori/$laboratorio.jpg";
        if (is_url_exist($url))
        {
            $array = array("link" => $url);
@@ -94,7 +94,7 @@
    else if ($docente)
    {   
        $docente = str_replace(' ', '%20', $docente);
-        $url = "$HOST_URL/telegram/itisbot/files/orario/docenti/$docente.jpg";
+        $url = "$HOST_URL/telegram/itismarconijesibot/files/orario/docenti/$docente.jpg";
        if (is_url_exist($url))
        {
            $array = array("link" => $url);
