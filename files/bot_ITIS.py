@@ -9,7 +9,7 @@ opener = AppURLopener()
 
 def chiama():
     threading.Timer(1800, chiama).start()
-    response = opener.open('https://www.simoneluconi.com/telegram/itisbot/index.php') 
+    response = opener.open('https://www.simoneluconi.com/telegram/itismarconijesibot/index.php') 
     code = response.getcode()
     if (code == 200):
      print('Response: ' + str(code) + ' :D')
