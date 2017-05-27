@@ -884,12 +884,7 @@
                             $testo = $mysqli->real_escape_string($testo);
                             $evento_link = $evento['link'];
                             $result = $mysqli->query("INSERT INTO db_eventi (evento, data_inizio, data_fine, link, circolare_allegata) VALUES ('$testo', '$data_inizio', '$data_fine', '$evento_link', '$numero_circolare')");
-                            
-                            $add_evento = squarecandy_add_to_gcal($testo, $data_inizio, $data_fine);
-
-                            $keyboard[] = array(array("text" => "\xF0\x9F\x8C\x8D Guarda nel sito", "url" => $evento_link));
-                            $keyboard[] = array(array("text"=> "\xF0\x9F\x93\x8C Aggiungi al calendario", "url"  => $add_evento));
-                    
+                            $keyboard[] = array(array("text" => "\xF0\x9F\x8C\x8D Guarda nel sito", "url" => $evento_link));                    
 
                             foreach ($utenti as & $utente) {
                                 sendInlineKeyboard($utente['chat_id'], $message, $keyboard);
