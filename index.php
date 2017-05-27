@@ -61,7 +61,7 @@
             }
 
             function sendDocument($chat_id, $document, $caption) {
-                if (sendAction(Telegram . "/sendDocument?chat_id=$chat_id&document=$document&caption=" . urlencode($caption)) == 403)
+                 if(sendAction(Telegram . "/sendDocument?chat_id=$chat_id&document=$document&caption=" . urlencode($caption)) == 403)
                     deleteUser($chat_id);
             }
             
@@ -316,8 +316,17 @@
                         if ($num_rows == 0) {
                             sendMessage($chat_id, "Mi dispiace, non ho trovato nessuna allegato con questo ID \xF0\x9F\x98\x94");
                         } else {
-                            while ($row = $result->fetch_assoc()) {
-                                sendDocument($chat_id, $row['allegato'], $row['titolo']);
+                            $exts = ["pdf", "zip", "gif"];
+                            if ($row = $result->fetch_assoc()) {
+                                $allegato = $row['allegato'];
+                                $ext = substr($allegato, strripos($allegato, ".") + 1);
+                                if (in_array($ext, $exts))
+                                    sendDocument($chat_id, $allegato , $row['titolo']); 
+                                else {
+                                    $keyboard = array();
+                                    $keyboard[] = array(array("text" => "\xF0\x9F\x93\x8E ".$row['titolo'], "url" => $allegato));
+                                    sendInlineKeyboard($chat_id, "Al momento non posso inviare questo tipo di allegato <b>($ext)</b> \xF0\x9F\x98\x94, per scaricarlo manualmente clicca il pulsante qui sotto:", $keyboard);
+                                }
                             }
                         }
 
