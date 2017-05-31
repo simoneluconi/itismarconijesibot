@@ -655,37 +655,25 @@
 
                 <div class="col s3">
                 <div class="card-panel">
-                <?php
-                echo "<span class=\"green-text text-darken-2\">Utenti registrati: <b>$n_users</b>";
-                ?>
-                </span>
+                <span class="green-text text-darken-2">Utenti registrati: <b><?php echo $n_users?></b></span>
                 </div>
                 </div>
 
                 <div class="col s3">
                 <div class="card-panel">
-                <?php
-                echo "<span class=\"red-text text-darken-2\">Utenti cancellati: <b>$n_deleted_users</b>";
-                ?>
-                </span>
+                <span class="red-text text-darken-2">Utenti cancellati: <b><?php echo $n_deleted_users?></b></span>
                 </div>
                 </div>
 
                 <div class="col s3">
                 <div class="card-panel">
-                <?php
-                echo "<span class=\"blue-text text-darken-2\">Numero circolari: <b>$n_circolari</b>";
-                ?>
-                </span>
+                <span class="blue-text text-darken-2">Numero circolari: <b><?php echo $n_circolari?></b></span>
                 </div>
                 </div>
 
                 <div class="col s3">
                 <div class="card-panel">
-                <?php
-                echo "<span class=\"blue-text text-darken-2\">Numero eventi: <b>$n_eventi</b>";
-                ?>
-                </span>
+                <span class="blue-text text-darken-2">Numero eventi: <b><?php echo $n_eventi?></b></span>
                 </div>
                 </div>
 
