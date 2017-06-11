@@ -270,6 +270,12 @@
             }
 
             $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);    
+
+            $result = $mysqli->query("SELECT * FROM db_bot_telegram_itis");
+            $utenti = array();
+            while ($row = $result->fetch_assoc()) {
+                $utenti[] = $row;
+            }
             
             if ($message)
             {
@@ -339,7 +345,19 @@
                 {
                     remove_keyboard($chat_id, "Ultimo comando cancellato \xF0\x9F\x98\x89");
                     updateLastCommand($chat_id, NULL);
-                } else if (strpos($last_command, 'Studenti') !== false)
+                } else if ($message == "/invia" && $chat_id == ADMIN_CHAT_ID)
+                {
+                    sendMessage($chat_id, "\xE2\x9C\x8F Invia il messaggio che vuoi inoltrare:");
+                    updateLastCommand($chat_id, $message);
+                } else if ($last_command == "/invia" && $chat_id == ADMIN_CHAT_ID)
+                {
+                    foreach ($utenti as & $utente) {
+                        sendMessage($utente['chat_id'], $message);
+                    }
+                    sendMessage($chat_id, "\xE2\x9C\x94 Messaggio inoltrato!");
+                    updateLastCommand($chat_id, NULL);
+                }
+                else if (strpos($last_command, 'Studenti') !== false)
                 {
                     $tmp = explode(" ", $message);
                     $response = json_decode(Download_Html($HOST_URL.ORARIO_URL."?classe=".$tmp[1]));
@@ -635,11 +653,6 @@
             }
 
               if (!$message && !isset($updates['callback_query'])) {
-                $result = $mysqli->query("SELECT * FROM db_bot_telegram_itis");
-                $utenti = array();
-                while ($row = $result->fetch_assoc()) {
-                    $utenti[] = $row;
-                }
                 $n_users = count($utenti);
 
                 $result = $mysqli->query("SELECT * FROM db_deleted");
