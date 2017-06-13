@@ -433,7 +433,7 @@
                     }
                 }
             
-                sendKeyboard($chat_id, "\xF0\x9F\x93\x9A Seleziona una classe", $array);
+                sendKeyboard($chat_id, "\xF0\x9F\x93\x9A Seleziona una classe:", $array);
             
             }  else if ($message == "Laboratori" && (strpos($last_command, '/orario') !== false)) {
                 sendChatAction($chat_id, TYPING);
@@ -450,7 +450,7 @@
                         $count = 0;
                     }
                 }
-                sendKeyboard($chat_id, "\xF0\x9F\x9A\xAA Seleziona un laboratorio", $array);
+                sendKeyboard($chat_id, "\xF0\x9F\x9A\xAA Seleziona un laboratorio:", $array);
             }  else if ($message == "Docenti" && (strpos($last_command, '/orario') !== false)) {
                 sendChatAction($chat_id, TYPING);
                 $response = json_decode(Download_Html($HOST_URL.ORARIO_URL."?tipo_orario=Docenti"));
@@ -466,7 +466,7 @@
                         $count = 0;
                     }
                 }
-                sendKeyboard($chat_id, "\xF0\x9F\x8E\x93 Seleziona un docente", $array);
+                sendKeyboard($chat_id, "\xF0\x9F\x8E\x93 Seleziona un docente:", $array);
             }
              else if ($message == "Recupero/Potenziamento" && (strpos($last_command, '/orario') !== false)) {
                 sendChatAction($chat_id, UPLOAD_DOCUMENT);
