@@ -402,17 +402,6 @@
                     sendPhoto($chat_id, $response->link);
                     } else remove_keyboard($chat_id, "Mi dispiace, non ho trovato l'orario del docente <b>$message</b> \xF0\x9F\x98\x94");
                         updateLastCommand($chat_id, NULL);
-                } else if (strpos($last_command, '/recuperi') !== false)
-                {
-                    sendChatAction($chat_id, TYPING);
-                    $tmp = str_replace(' ', '%20' , $message);
-                    $response = json_decode(Download_Html($HOST_URL.ORARIO_URL."?recupero=".$tmp));
-                if ($response->link) {
-                    remove_keyboard($chat_id, "\xF0\x9F\x93\xA9	Ti invio l'orario delle prove di recupero delle <b>$message</b>");
-                    sendChatAction($chat_id, UPLOAD_PHOTO);
-                    sendPhoto($chat_id, $response->link);
-                    } else remove_keyboard($chat_id, "Mi dispiace, non ho trovato l'orario delle prove di recupero delle <b>$message</b> \xF0\x9F\x98\x94");
-                    updateLastCommand($chat_id, NULL);                
                 }
                 else if ($message == "/start" || $message == "/start@itismarconijesibot") {
                     sendChatAction($chat_id, TYPING);
@@ -436,23 +425,6 @@
                             updateLastCommand($chat_id, NULL);
                         }
                     }
-            } else if ($message == "/recuperi" || $message == "/recuperi@itismarconijesibot") {
-                sendChatAction($chat_id, TYPING);
-                $response = json_decode(Download_Html($HOST_URL.ORARIO_URL."?tipo_orario=Recuperi"));
-
-                $array = array(); $row = array(); $count = 0;
-                foreach ($response as $classe)
-                {
-                    $row[] = $classe;
-                    $count++;
-                    if ($count == 2) {
-                        $array[] = $row;
-                        $row = array();
-                        $count = 0;
-                    }
-                }
-
-                sendKeyboard($chat_id, "\xF0\x9F\x93\x9A Seleziona una classe:", $array);
             }
             else if ($message == "/orario" || $message == "/orario@itismarconijesibot") {
                 sendChatAction($chat_id, TYPING);
@@ -516,27 +488,26 @@
                 updateLastCommand($chat_id, NULL);
             } else if ($message == "/calendario" || $message == "/calendario@itismarconijesibot") {
                 sendChatAction($chat_id, TYPING);
-                $reply = "<b>Calendario Scolastico 2016-2019</b>\n";
-                $reply.= "\xF0\x9F\x93\x85 Inizio lezioni: <b>Giovedì 15 Settembre 2016</b>\n";
-                $reply.= "\xF0\x9F\x93\x85 Fine lezioni: <b>Giovedì 8 Giugno 2017</b>\n";
+                $reply = "<b>Calendario Scolastico 2017-2018</b>\n";
+                $reply.= "\xF0\x9F\x93\x85 Inizio lezioni: <b>Venerdì 15 Settembre 2017</b>\n";
+                $reply.= "\xF0\x9F\x93\x85 Fine lezioni: <b>Venerdì 8 Giugno 2018</b>\n";
                 $reply.= "\n";
                 $reply.= "\xF0\x9F\x8E\x89 La scuola resterà chiusa nelle seguenti <b>giornate di festività</b>:\n";
-                $reply.= "• 22 Settembre 2016 (festa del Patrono)\n";
-                $reply.= "• 01 Novembre 2016 (festa di tutti i Santi)\n";
-                $reply.= "• 02 Novembre 2016 (commemorazione dei defunti)\n";
-                $reply.= "• 08 Dicembre 2016 (Immacolata Concezione)\n";
-                $reply.= "• 25 Dicembre 2016 (Santo Natale)\n";
-                $reply.= "• 26 Dicembre 2016 (Santo Stefano)\n";
-                $reply.= "• 01 Gennaio 2017 (Capodanno)\n";
-                $reply.= "• 06 Gennaio 2017 (Epifania)\n";
-                $reply.= "• 07 Gennaio 2017 (scelta dalla scuola)\n";
-                $reply.= "• 17 Aprile 2017 (Lunedì dell'Angelo)\n";
-                $reply.= "• 25 Aprile 2017 (anniversario della Liberazione)\n";
-                $reply.= "• 01 Maggio 2017 (festa del Lavoro)\n";
-                $reply.= "• 02 Giugno 2017 (festa nazionale della Repubblica)\n";
+                $reply.= "• 22 Settembre 2017 (festa del Patrono)\n";
+                $reply.= "• 01 Novembre 2017 (festa di tutti i Santi)\n";
+                $reply.= "• 02 Novembre 2017 (commemorazione dei defunti)\n";
+                $reply.= "• 08 Dicembre 2017 (Immacolata Concezione)\n";
+                $reply.= "• 25 Dicembre 2017 (Santo Natale)\n";
+                $reply.= "• 26 Dicembre 2017 (Santo Stefano)\n";
+                $reply.= "• 01 Gennaio 2018 (Capodanno)\n";
+                $reply.= "• 06 Gennaio 2018 (Epifania)\n";
+                $reply.= "• 2 Aprile 2018 (Lunedì dell'Angelo)\n";
+                $reply.= "• 25 Aprile 2018 (anniversario della Liberazione)\n";
+                $reply.= "• 01 Maggio 2018 (festa del Lavoro)\n";
+                $reply.= "• 02 Giugno 2018 (festa nazionale della Repubblica)\n";
                 $reply.= "\n";
-                $reply.= "\xF0\x9F\x8E\x84 <b>Vacanze di Natale</b>: dal 24 Dicembre 2016 al 5 Gennaio 2017\n";
-                $reply.= "\xF0\x9F\x90\xB0 <b>Vacanze di Pasqua</b>: dal 13 Aprile 2017 al 18 Aprile 2017\n";
+                $reply.= "\xF0\x9F\x8E\x84 <b>Vacanze di Natale</b>: dal 24 Dicembre 2017 al 5 Gennaio 2018\n";
+                $reply.= "\xF0\x9F\x90\xB0 <b>Vacanze di Pasqua</b>: dal 29 Marzo 2018 al 3 Aprile 2018\n";
                 sendMessage($chat_id, $reply);
                 updateLastCommand($chat_id, NULL);
             } else if ($message == "/id" || $message == "/id@itismarconijesibot" ) {
