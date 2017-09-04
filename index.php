@@ -561,7 +561,7 @@
                             }
                         }
                     } else {
-                        $cerca = "circolare n." . $numero;
+                        $cerca = "circolare n.$numero ";
                         $cerca = $mysqli->real_escape_string($cerca);
                         $result = $mysqli->query("SELECT * FROM db_circolari WHERE titolo LIKE '$cerca%'");
                         $num_rows = $result->num_rows;
