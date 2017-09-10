@@ -234,6 +234,25 @@
                 return $row['last_command'];
             }
 
+            function updateLastNews($title, $time)
+            {            
+                $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+                $title = $mysqli->real_escape_string($title);
+                $time = $mysqli->real_escape_string($time);
+                $result = $mysqli->query("TRUNCATE TABLE db_last_news");
+                $result = $mysqli->query("INSERT INTO db_last_news (title, time) VALUES ('$title', '$time')");
+                $mysqli->close();
+            }
+            
+            function getLastNews()
+            {
+                $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);    
+                $result = $mysqli->query("SELECT * from db_last_news");
+                $row = $result->fetch_assoc();
+                $mysqli->close();
+                return $row;
+            }
+
             function deleteUser($chat_id)
             {            
                 $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
@@ -815,7 +834,7 @@
                 <tbody>
 
                 <?php
-                $table = $dom->getElementsByTagName('table')->item(1); //Eventi
+                $table = $dom->getElementsByTagName('table')->item(0); //Eventi
                 $rows = $table->getElementsByTagName('tr');
                 $eventi = array();
                 foreach ($rows as $row) {
@@ -905,6 +924,27 @@
                         }
                     }
                 }
+            }
+
+            $dom = new DomDocument();
+            $content = Download_Html(ITIS_URL . "/news.html");
+            @$dom->loadHTML($content);
+            $table = $dom->getElementById('itemListPrimary'); //Tabella News
+            $last_news = $table->getElementsByTagName('div')->item(0);
+            
+            $title = $last_news->getElementsByTagName('h3')->item(0)->getElementsByTagName("a")->item(0); //Titolo
+            $link = ITIS_URL.$title->getattribute('href'); //Link
+            $title = trim($title->nodeValue); //Titolo testo
+            $time = $last_news->getElementsByTagName('span')->item(0)->nodeValue;
+            $time = trim(str_replace("Ultima modifica il ", "", $time)); //Orario
+
+            $oldNews = getLastNews();
+
+            if ($oldNews['time'] != $time || $oldNews['title'] != $title)
+            {
+                sendMessage("150543610", "Nuova News:\n<b>Titolo:</b> $title\n<b>Orario:</b> $time\n<b>Link:</b> $link");
+                echo "Nuova News:\n<b>Titolo:</b> $title\n<b>Orario:</b> $time\n<b>Link:</b> $link";
+                updateLastNews($title, $time);
             }
 
             if(isset($_GET["usr"]))
