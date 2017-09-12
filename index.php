@@ -447,11 +447,8 @@
             }
             else if ($message == "/orario" || $message == "/orario@itismarconijesibot") {
                 sendChatAction($chat_id, TYPING);
-                //$array = array(array("Studenti"), array("Docenti"), array("Laboratori"), array("Recupero/Potenziamento"));
-                //sendKeyboard($chat_id, "\xF0\x9F\x95\x90 Seleziona un orario: ", $array);
-                sendMessage($chat_id, "\xE2\x9D\x95	Le lezioni avranno <b>inizio</b>, per tutte le classi, <b>Venerdi 15 settembre 2017 alle ore 8.00</b>".
-                " e l’orario provvisorio delle lezioni sarà <b>pubblicato</b> nel sito dell’Istituto il <b>13 settembre</b> e verrà inviata una notifica attraverso questo bot.".
-                "\nVi ricordo inoltre che sarà possibile controllare l'orario, appena pubblicato, attraverso il comando /orario");
+            $array = array(array("Studenti"), array("Docenti"), /*array("Laboratori"), array("Recupero/Potenziamento")*/);
+                sendKeyboard($chat_id, "\xF0\x9F\x95\x90 Seleziona un orario: ", $array);
             } else if ($message == "Studenti" && (strpos($last_command, '/orario') !== false)) {
                 sendChatAction($chat_id, TYPING);
                 $response = json_decode(Download_Html($HOST_URL.ORARIO_URL."?tipo_orario=Studenti"));
