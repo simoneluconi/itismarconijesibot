@@ -70,8 +70,22 @@
                     deleteUser($chat_id);
             }
             
-            function sendPhoto($chat_id, $link) {
-                sendAction(Telegram . "/sendPhoto?chat_id=$chat_id&photo=" . urlencode($link));
+            function sendPhoto($chat_id, $caption, $local_photo) {
+                $postfields = [ 'chat_id' => $chat_id, 
+                'photo' => new \CURLFile($local_photo, 'image/jpg'),
+                'caption' => $caption ]; 
+                
+                $ch = curl_init(); 
+                curl_setopt($ch, CURLOPT_URL, Telegram."/sendPhoto"); 
+                curl_setopt($ch, CURLOPT_HEADER, true); 
+                curl_setopt($ch, CURLOPT_POST, 1); 
+                curl_setopt($ch, CURLOPT_HTTPHEADER, 
+                array("Content-Type:multipart/form-data")); 
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields); 
+                curl_setopt($ch, CURLOPT_INFILESIZE, filesize($local_photo)); 
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
+                curl_exec($ch);
+                curl_close($ch);
             }
 
             function sendChatAction($chat_id, $action) {
@@ -396,7 +410,7 @@
                         sendChatAction($chat_id, TYPING);
                         remove_keyboard($chat_id, "\xF0\x9F\x93\xA9 Ti invio l'orario della <b>classe ". $tmp[1]."</b>");
                         sendChatAction($chat_id, UPLOAD_PHOTO);
-                        sendPhoto($chat_id, $response->link);
+                        sendPhoto($chat_id, "Orario della classe ". $tmp[1], $response->link);
                     } else remove_keyboard($chat_id, "Mi dispiace, non ho trovato l'orario della <b>classe ". $tmp[1])."</b> \xF0\x9F\x98\x94";
                         updateLastCommand($chat_id, NULL);
                 } else if (strpos($last_command, 'Laboratori') !== false)
@@ -407,7 +421,7 @@
                 if ($response->link) {
                     remove_keyboard($chat_id, "\xF0\x9F\x93\xA9	Ti invio l'orario del <b>$message</b>");
                     sendChatAction($chat_id, UPLOAD_PHOTO);
-                    sendPhoto($chat_id, $response->link);
+                    sendPhoto($chat_id, "Orario del $message", $response->link);
                     } else remove_keyboard($chat_id, "Mi dispiace, non ho trovato l'orario del <b>$message</b> \xF0\x9F\x98\x94");
                         updateLastCommand($chat_id, NULL);                
                 } else if (strpos($last_command, 'Docenti') !== false)
@@ -418,7 +432,7 @@
                 if ($response->link) {
                     remove_keyboard($chat_id, "\xF0\x9F\x93\xA9	Ti invio l'orario del docente <b>$message</b>");
                     sendChatAction($chat_id, UPLOAD_PHOTO);
-                    sendPhoto($chat_id, $response->link);
+                    sendPhoto($chat_id, "Orario del docente $message" , $response->link);
                     } else remove_keyboard($chat_id, "Mi dispiace, non ho trovato l'orario del docente <b>$message</b> \xF0\x9F\x98\x94");
                         updateLastCommand($chat_id, NULL);
                 }

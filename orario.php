@@ -28,7 +28,7 @@ if ($tipo_orario) {
     if ($tipo_orario == "Studenti")
     {
         $classi = array();
-        $files = array_diff(scandir("files/orario/provvisorio12092017/classi/"), array('..', '.'));
+        $files = array_diff(scandir("files/orario/classi/"), array('..', '.'));
     
         foreach ($files as $file)
         {
@@ -41,7 +41,7 @@ if ($tipo_orario) {
     } else if ($tipo_orario == "Docenti")
     {
         $docenti = array();
-        $files = array_diff(scandir("files/orario/provvisorio12092017/docenti/"), array('..', '.'));
+        $files = array_diff(scandir("files/orario/docenti/"), array('..', '.'));
     
         foreach ($files as $file)
         {
@@ -53,7 +53,7 @@ if ($tipo_orario) {
     } else if ($tipo_orario == "Laboratori")
     {
         $laboratori = array();
-        $files = array_diff(scandir("files/orario/provvisorio12092017/laboratori/"), array('..', '.'));
+        $files = array_diff(scandir("files/orario/laboratori/"), array('..', '.'));
     
         foreach ($files as $file)
         {
@@ -77,11 +77,10 @@ if ($tipo_orario) {
         echo json_encode($laboratori);
     }
 } else if ($classe) {
-    $classe = str_replace(' ', '%20', $classe);
-    $url = "$HOST_URL/telegram/itismarconijesibot/files/orario/provvisorio12092017/classi/Classe_$classe.jpg";
-    if (is_url_exist($url))
+    $path = "files/orario/classi/Classe_$classe.jpg";
+    if (realpath($path))
     {
-        $array = array("link" => $url);
+        $array = array("link" => $path);
         echo json_encode($array);
     } else 
     {
@@ -91,11 +90,10 @@ if ($tipo_orario) {
 }
 else if ($laboratorio)
 {   
-    $laboratorio = str_replace(' ', '%20', $laboratorio);
-    $url = "$HOST_URL/telegram/itismarconijesibot/files/orario/provvisorio12092017/laboratori/$laboratorio.jpg";
-    if (is_url_exist($url))
+    $path = "files/orario/laboratori/$laboratorio.jpg";
+    if (realpath($path))
     {
-        $array = array("link" => $url);
+        $array = array("link" => $path);
         echo json_encode($array);
     } else 
     {
@@ -105,9 +103,8 @@ else if ($laboratorio)
 }
 else if ($docente)
 {   
-    $docente = str_replace(' ', '%20', $docente);
-    $url = "$HOST_URL/telegram/itismarconijesibot/files/orario/provvisorio12092017/docenti/$docente.jpg";
-    if (is_url_exist($url))
+    $url = "files/orario/docenti/$docente.jpg";
+    if (realpath($url))
     {
         $array = array("link" => $url);
         echo json_encode($array);
@@ -118,9 +115,8 @@ else if ($docente)
     }
 } else if ($recupero)
 {   
-    $recupero = str_replace(' ', '_', $recupero);
-    $url = "$HOST_URL/telegram/itismarconijesibot/files/orario/provvisorio12092017/recuperi/$recupero.jpg";
-    if (is_url_exist($url))
+    $url = "files/orario/recuperi/$recupero.jpg";
+    if (realpath($url))
     {
         $array = array("link" => $url);
         echo json_encode($array);
