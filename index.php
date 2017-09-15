@@ -464,6 +464,9 @@
                         $count = 0;
                     }
                 }
+                
+                if ($count != 0)
+                    $array[] = $row;
             
                 sendKeyboard($chat_id, "\xF0\x9F\x93\x9A Seleziona una classe:", $array);
             
@@ -482,6 +485,10 @@
                         $count = 0;
                     }
                 }
+
+                if ($count != 0)
+                    $array[] = $row;
+
                 sendKeyboard($chat_id, "\xF0\x9F\x9A\xAA Seleziona un laboratorio:", $array);
             }  else if ($message == "Docenti" && (strpos($last_command, '/orario') !== false)) {
                 sendChatAction($chat_id, TYPING);
@@ -498,6 +505,10 @@
                         $count = 0;
                     }
                 }
+
+                if ($count != 0)
+                    $array[] = $row;
+                    
                 sendKeyboard($chat_id, "\xF0\x9F\x8E\x93 Seleziona un docente:", $array);
             }
              else if ($message == "Recupero/Potenziamento" && (strpos($last_command, '/orario') !== false)) {
