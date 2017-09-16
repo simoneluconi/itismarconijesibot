@@ -461,7 +461,8 @@
             }
             else if ($message == "/orario" || $message == "/orario@itismarconijesibot") {
                 sendChatAction($chat_id, TYPING);
-            $array = array(array("Studenti"), array("Docenti"), /*array("Laboratori"), array("Recupero/Potenziamento")*/);
+                sendMessage($chat_id, "\xE2\x9D\x97 Nota: Questi orari saranno in vigore fino al <b>30/09/2017</b>.");
+                $array = array(array("Studenti"), array("Docenti"), /*array("Laboratori"), array("Recupero/Potenziamento")*/);
                 sendKeyboard($chat_id, "\xF0\x9F\x95\x90 Seleziona un orario: ", $array);
             } else if ($message == "Studenti" && (strpos($last_command, '/orario') !== false)) {
                 sendChatAction($chat_id, TYPING);
