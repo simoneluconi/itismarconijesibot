@@ -762,7 +762,10 @@
                 $dom = new DomDocument();
                 $content = Download_Html(ITIS_URL . "/docenti-ata/circolari-e-comunicazioni.html");
                 @$dom->loadHTML($content);
-                $table = $dom->getElementsByTagName('table')->item(0); //Circolari
+                $finder = new DomXPath($dom);
+                $classname="category table table-striped table-bordered table-hover";
+                $nodes = $finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), ' $classname ')]");
+                $table = $nodes->item(0); //Circolari
                 $rows = $table->getElementsByTagName('tr');
                 $circolari = array();
                 foreach ($rows as $row) {
@@ -860,7 +863,10 @@
                 <tbody>
 
                 <?php
-                $table = $dom->getElementsByTagName('table')->item(0); //Eventi
+                $finder = new DomXPath($dom);
+                $classname="mod_events_latest_table";
+                $nodes = $finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), ' $classname ')]");
+                $table = $nodes->item(0);
                 $rows = $table->getElementsByTagName('tr');
                 $eventi = array();
                 foreach ($rows as $row) {
