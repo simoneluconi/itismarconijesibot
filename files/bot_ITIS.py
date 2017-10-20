@@ -2,6 +2,7 @@
 import os, threading, urllib.request
 from lxml import etree, html
 import ctypes
+import datetime
 
 ctypes.windll.kernel32.SetConsoleTitleW("ITIS Bot Check")
 
@@ -15,10 +16,10 @@ def chiama():
     response = opener.open('https://www.simoneluconi.com/telegram/itismarconijesibot/index.php') 
     code = response.getcode()
     if (code == 200):
-     print('Response: ' + str(code) + ' :D')
+     print(str(datetime.datetime.now()) + ' Response: ' + str(code) + ' :)')
      result = response.read()
      response.close()
     else: 
-     print('Response: ' + str(code) + ' :(')
+     print(str(datetime.datetime.now()) + ' Response: ' + str(code) + ' :(')
      
 chiama()
