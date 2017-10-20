@@ -1,6 +1,9 @@
 #Importo le librerie neccessarie
 import os, threading, urllib.request
 from lxml import etree, html
+import ctypes
+
+ctypes.windll.kernel32.SetConsoleTitleW("ITIS Bot Check")
 
 class AppURLopener(urllib.request.FancyURLopener):
     version = "Mozilla/5.0"
