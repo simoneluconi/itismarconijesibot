@@ -229,6 +229,10 @@
             function updateLastCommand($chat_id, $command)
             {            
                 $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);   
+                if ($mysqli->connect_errno) {
+                    printf("Connect failed: %s\n", $mysqli->connect_error);
+                    exit();
+                }
                 if ($command) {
                 $command = $mysqli->real_escape_string($command);
                 $result = $mysqli->query("UPDATE db_bot_telegram_itis SET last_command = '$command' where chat_id='$chat_id'");
@@ -241,7 +245,11 @@
             
             function getLastCommand($chat_id)
             {
-                $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);    
+                $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);  
+                if ($mysqli->connect_errno) {
+                    printf("Connect failed: %s\n", $mysqli->connect_error);
+                    exit();
+                }  
                 $result = $mysqli->query("SELECT last_command from db_bot_telegram_itis where chat_id='$chat_id'");
                 $row = $result->fetch_assoc();
                 $mysqli->close();
@@ -251,6 +259,10 @@
             function updateLastNews($title, $time)
             {            
                 $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+                if ($mysqli->connect_errno) {
+                    printf("Connect failed: %s\n", $mysqli->connect_error);
+                    exit();
+                }
                 $title = $mysqli->real_escape_string($title);
                 $time = $mysqli->real_escape_string($time);
                 $result = $mysqli->query("TRUNCATE TABLE db_last_news");
@@ -261,6 +273,10 @@
             function getLastNews()
             {
                 $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);    
+                if ($mysqli->connect_errno) {
+                    printf("Connect failed: %s\n", $mysqli->connect_error);
+                    exit();
+                }
                 $result = $mysqli->query("SELECT * from db_last_news");
                 $row = $result->fetch_assoc();
                 $mysqli->close();
@@ -270,6 +286,10 @@
             function deleteUser($chat_id)
             {            
                 $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+                if ($mysqli->connect_errno) {
+                    printf("Connect failed: %s\n", $mysqli->connect_error);
+                    exit();
+                }
                 $result = $mysqli->query("DELETE from db_bot_telegram_itis where chat_id='$chat_id'");
                 $result = $mysqli->query("INSERT INTO db_deleted (chat_id) VALUES ('$chat_id')");
                 $mysqli->close();
@@ -277,7 +297,11 @@
 
             function trovaAllegatiPerCircolare($titolo)
             {
-                $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);    
+                $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);   
+                if ($mysqli->connect_errno) {
+                    printf("Connect failed: %s\n", $mysqli->connect_error);
+                    exit();
+                } 
                 $titolo = $mysqli->real_escape_string($titolo);
                 $result = $mysqli->query("SELECT * from db_allegati where circolare='$titolo'");
                 $results = array();
@@ -302,7 +326,12 @@
                     }
             }
 
-            $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);    
+            $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);  
+            
+            if ($mysqli->connect_errno) {
+                printf("Connect failed: %s\n", $mysqli->connect_error);
+                exit();
+            }
 
             $result = $mysqli->query("SELECT * FROM db_bot_telegram_itis");
             $utenti = array();
