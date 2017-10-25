@@ -409,25 +409,14 @@
                     updateLastCommand($chat_id, NULL);
                 } else if ($message == "/invia" && $chat_id == ADMIN_CHAT_ID)
                 {
-                    sendMessage($chat_id, "\xE2\x9C\x8F Invia il messaggio che vuoi inoltrare:");
+                    sendKeyboard($chat_id, "\xE2\x9C\x8F Invia il messaggio che vuoi inoltrare:", $keyboard);
                     updateLastCommand($chat_id, $message);
                 } else if ($last_command == "/invia" && $chat_id == ADMIN_CHAT_ID)
                 {
-                    if ($message == "Scrutini") {
-
-                        $message = "\xE2\x9D\x97 Si informano tutti gli studenti che gli <b>scrutini</b> sono stati pubblicati nell'apposita sezione del registro elettronico.";
-
-                        $keyboard[] = array(array("text" => "\xF0\x9F\x93\x91 Vai agli scrutini", "url" => "https://web.spaggiari.eu/sol/app/default/documenti_sol.php"));     
-
-                         foreach ($utenti as & $utente) {
-                            sendInlineKeyboard($utente['chat_id'], $message, $keyboard);
-                        }
-
-                    } else {
-                        foreach ($utenti as & $utente) {
-                            sendMessage($utente['chat_id'], $message);
-                        }
+                    foreach ($utenti as & $utente) {
+                        sendMessage($utente['chat_id'], $message);
                     }
+
                     sendMessage($chat_id, "\xE2\x9C\x94 Messaggio inoltrato!");
                     updateLastCommand($chat_id, NULL);
                 }
@@ -490,7 +479,7 @@
             }
             else if ($message == "/orario" || $message == "/orario@itismarconijesibot") {
                 sendChatAction($chat_id, TYPING);
-                $array = array(array("Studenti"), array("Docenti"), array("Laboratori") /*, array("Recupero/Potenziamento")*/);
+                $array = array(array("Studenti"), array("Docenti"), array("Laboratori"), array("Recupero/Potenziamento"));
                 sendKeyboard($chat_id, "\xF0\x9F\x95\x90 Seleziona un orario: ", $array);
             } else if ($message == "Studenti" && (strpos($last_command, '/orario') !== false)) {
                 sendChatAction($chat_id, TYPING);
@@ -556,8 +545,8 @@
             }
              else if ($message == "Recupero/Potenziamento" && (strpos($last_command, '/orario') !== false)) {
                 sendChatAction($chat_id, UPLOAD_DOCUMENT);
-                sendDocument($chat_id, ITIS_URL . "/images/stories/orario/online/itismarconi-jesi_orario_potenziamento_aprile-maggio-giugno-2017.pdf", "Orario Recupero/Potenziamento");
-                remove_keyboard($chat_id, "\xF0\x9F\x93\x86 Aggiornato al: 31/3/2017");
+                sendDocument($chat_id, ITIS_URL . "/images/stories/orario/online/itismarconi-jesi_orario_potenziamento_ott-nov-2017.pdf", "Orario Recupero/Potenziamento Ottobre/Novembre");
+                remove_keyboard($chat_id, "\xF0\x9F\x93\x86 Aggiornato al: 23/10/2017");
                 updateLastCommand($chat_id, NULL);
             } else if ($message == "/calendario" || $message == "/calendario@itismarconijesibot") {
                 sendChatAction($chat_id, TYPING);
