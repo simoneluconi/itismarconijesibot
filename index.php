@@ -417,7 +417,7 @@
                         sendMessage($utente['chat_id'], $message);
                     }
 
-                    sendMessage($chat_id, "\xE2\x9C\x94 Messaggio inoltrato!");
+                    remove_keyboard($chat_id, "\xE2\x9C\x94 Messaggio inoltrato!");
                     updateLastCommand($chat_id, NULL);
                 }
                 else if (strpos($last_command, 'Studenti') !== false)
