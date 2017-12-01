@@ -342,7 +342,7 @@
             if ($message)
             {
                 $last_command = getLastCommand($chat_id);
-                if ($last_command != "/circolari" && $last_command != "/circolari@itismarconijesibot")
+                if ($last_command != "/cerca" && $last_command != "/cerca@itismarconijesibot")
                     updateLastCommand($chat_id, $message);
             }
 
@@ -545,7 +545,7 @@
             }
              else if ($message == "Recupero/Potenziamento" && (strpos($last_command, '/orario') !== false)) {
                 sendChatAction($chat_id, UPLOAD_DOCUMENT);
-                sendDocument($chat_id, ITIS_URL . "/images/stories/orario/online/itismarconi-jesi_orario_potenziamento_ott-nov-2017.pdf", "Orario Recupero/Potenziamento Ottobre/Novembre");
+                sendDocument($chat_id, ITIS_URL . "/images/stories/orario/online/itismarconi-jesi_orario_potenziamento_dic-2107.pdf", "Orario Recupero/Potenziamento Dicembre");
                 remove_keyboard($chat_id, "\xF0\x9F\x93\x86 Aggiornato al: 23/10/2017");
                 updateLastCommand($chat_id, NULL);
             } else if ($message == "/calendario" || $message == "/calendario@itismarconijesibot") {
@@ -582,11 +582,11 @@
                 $reply .= "Questo bot è opensuorce \xF0\x9F\x8E\x86 Puoi visualizzare il sorgente su <a href='https://github.com/simoneluconi/itismarconijesibot/'>Github</a> e contribuire al suo sviluppo. In alternativa, per propormi dei suggerimenti contattami a @simoneluconi.";
                 sendMessage($chat_id, $reply);
                 updateLastCommand($chat_id, NULL);
-            } else if ($message == "/circolari" || $message == "/circolari@itismarconijesibot") {
+            } else if ($message == "/cerca" || $message == "/cerca@itismarconijesibot") {
                 sendChatAction($chat_id, TYPING);
                 $keyboard = array(); //Vuoto perchè viene già aggiunto dal metodo
                 sendKeyboard($chat_id, message_circolari, $keyboard);
-            } else if ((strpos(strtolower($message), 'circolare') !== false ) && (strpos($last_command, '/circolari') !== false)) {
+            } else if ((strpos(strtolower($message), 'circolare') !== false ) && (strpos($last_command, '/cerca') !== false)) {
                 sendChatAction($chat_id, TYPING);
                 $tmp = explode(" ", $message);
                 if (count($tmp) > 1) {
@@ -643,7 +643,7 @@
                     errCircolari($chat_id);
                     updateLastCommand($chat_id, NULL);
                 }
-            } else if (strpos(strtolower($message), 'circolari') !== false && (strpos($last_command, '/circolari') !== false)) {
+            } else if (strpos(strtolower($message), 'circolari') !== false && (strpos($last_command, '/cerca') !== false)) {
                 sendChatAction($chat_id, TYPING);
                 $tmp = explode(" ", strtolower($message));
                 if ($tmp[1] == "di") {
