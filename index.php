@@ -231,6 +231,7 @@
                 $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);   
                 if ($mysqli->connect_errno) {
                     printf("Connect failed: %s\n", $mysqli->connect_error);
+                    header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);                    
                     exit();
                 }
                 if ($command) {
@@ -247,6 +248,7 @@
             {
                 $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);  
                 if ($mysqli->connect_errno) {
+                    header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);                    
                     printf("Connect failed: %s\n", $mysqli->connect_error);
                     exit();
                 }  
@@ -260,6 +262,7 @@
             {            
                 $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
                 if ($mysqli->connect_errno) {
+                    header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);       
                     printf("Connect failed: %s\n", $mysqli->connect_error);
                     exit();
                 }
@@ -274,6 +277,7 @@
             {
                 $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);    
                 if ($mysqli->connect_errno) {
+                    header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);       
                     printf("Connect failed: %s\n", $mysqli->connect_error);
                     exit();
                 }
@@ -287,6 +291,7 @@
             {            
                 $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
                 if ($mysqli->connect_errno) {
+                    header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);       
                     printf("Connect failed: %s\n", $mysqli->connect_error);
                     exit();
                 }
@@ -299,6 +304,7 @@
             {
                 $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);   
                 if ($mysqli->connect_errno) {
+                    header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);       
                     printf("Connect failed: %s\n", $mysqli->connect_error);
                     exit();
                 } 
@@ -329,6 +335,7 @@
             $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);  
             
             if ($mysqli->connect_errno) {
+                header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);       
                 printf("Connect failed: %s\n", $mysqli->connect_error);
                 exit();
             }
