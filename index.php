@@ -570,6 +570,7 @@
                 $reply.= "• 26 Dicembre 2017 (Santo Stefano)\n";
                 $reply.= "• 01 Gennaio 2018 (Capodanno)\n";
                 $reply.= "• 06 Gennaio 2018 (Epifania)\n";
+                $reply.= "• 31 Marzo 2018 (Ponte)\n";
                 $reply.= "• 2 Aprile 2018 (Lunedì dell'Angelo)\n";
                 $reply.= "• 25 Aprile 2018 (anniversario della Liberazione)\n";
                 $reply.= "• 01 Maggio 2018 (festa del Lavoro)\n";
