@@ -69,6 +69,11 @@
                 if(sendAction(Telegram . "/sendMessage?chat_id=$chat_id&text=" . urlencode($message) . "&parse_mode=HTML") == 403)
                     deleteUser($chat_id);
             }
+
+            function modifyMessage($chat_id, $message_id, $message)
+            {
+                sendAction(Telegram."/editMessageText?chat_id=$chat_id&message_id=$message_id&text=".urlencode($message)."&parse_mode=HTML");
+            }
             
             function sendPhoto($chat_id, $caption, $local_photo) {
                 $postfields = [ 'chat_id' => $chat_id, 
@@ -712,22 +717,33 @@
             } else if ($message == "/stato" || $message == "/stato@itismarconijesibot") {
             
             sendChatAction($chat_id, TYPING);
+
             $message = "<b>Stato dei servizi scolastici:</b>\n";
-            $message .= "\xF0\x9F\x94\xB4 = Offline | \xF0\x9F\x94\xB5 = Online | \xE2\x8F\xB3 = Rallentato\n\n";
+            $message .= "\xF0\x9F\x94\xB4 = Offline | \xF0\x9F\x94\xB5 = Online | \xE2\x8F\xB3 = Rallentato | \xE2\x9D\x93 In Attesa\n\n";
+            $message .= "\xE2\x9D\x93 \tRegistro elettronico\n";
+            $message .= "\xE2\x9D\x93 \tMoodle\n";
+            $message .= "\xE2\x9D\x93 \tSito della scuola\n";
+
+            $response = json_decode(file_get_contents(Telegram."/sendMessage?chat_id=$chat_id&text=".urlencode($message)."&parse_mode=HTML"));
+            $messageId = $response->result->message_id;
             
             $icon = getMessageOnline(isOnline("https://web.spaggiari.eu/auth/app/default/AuthApi4.php?a=aLoginPwd"));
-            $message .=  $icon .= "\tRegistro elettronico\n";
-
+            $message = str_replace("\xE2\x9D\x93 \tRegistro elettronico\n", $icon .= "\tRegistro elettronico\n", $message);
             sendChatAction($chat_id, TYPING);
+            modifyMessage($chat_id, $messageId, $message);
+
+
             $icon = getMessageOnline(isOnline("https://elearning.itis.jesi.an.it/login/index.php"));
-            $message .= $icon .= "\tMoodle\n";
-
+            $message = str_replace("\xE2\x9D\x93 \tMoodle\n", $icon .= "\tMoodle\n", $message);;
             sendChatAction($chat_id, TYPING);
-            $icon = getMessageOnline(isOnline("https://www.itismarconi-jesi.gov.it/"));
-            $message .= $icon .= "\tSito della scuola\n";
+            modifyMessage($chat_id, $messageId, $message);
 
-             sendMessage($chat_id, $message);
-             updateLastCommand($chat_id, NULL);
+            $icon = getMessageOnline(isOnline("https://www.itismarconi-jesi.gov.it/"));
+            $message = str_replace("\xE2\x9D\x93 \tSito della scuola\n", $icon .= "\tSito della scuola\n", $message);
+            modifyMessage($chat_id, $messageId, $message);
+
+            updateLastCommand($chat_id, NULL);
+
             } else if (!isset($updates['callback_query']) && !is_null($message))
             { 
                 remove_keyboard($chat_id, "Mi dispiace, <b>$message</b> non è un comando valido.");
