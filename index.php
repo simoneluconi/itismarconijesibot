@@ -557,8 +557,8 @@
             }
              else if ($message == "Recupero/Potenziamento" && (strpos($last_command, '/orario') !== false)) {
                 sendChatAction($chat_id, UPLOAD_DOCUMENT);
-                sendDocument($chat_id, ITIS_URL . "/images/stories/orario/online/itismarconi-jesi_orario_potenziamento_gen-2108.pdf", "Orario Recupero/Potenziamento Gennaio");
-                remove_keyboard($chat_id, "\xF0\x9F\x93\x86 Aggiornato al: 12/01/2018");
+                sendDocument($chat_id, ITIS_URL . "/images/stories/orario/online/itismarconi-jesi_orario_potenziamento_feb-2108.pdf", "Orario Recupero/Potenziamento Febbraio");
+                remove_keyboard($chat_id, "\xF0\x9F\x93\x86 Aggiornato al: 2/02/2018");
                 updateLastCommand($chat_id, NULL);
             } else if ($message == "/calendario" || $message == "/calendario@itismarconijesibot") {
                 sendChatAction($chat_id, TYPING);
