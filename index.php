@@ -1,6 +1,7 @@
 <html>
    <head>
       <title>ITIS Marconi Jesi Bot</title>
+      <meta charset="UTF-8">
       <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
       <!-- Compiled and minified CSS -->
@@ -42,6 +43,7 @@
             $HOST_URL = HOST_URL();
 
             date_default_timezone_set('Europe/Rome');
+            setlocale(LC_TIME, 'ita', 'it_IT');
             define("message_circolari", "\xF0\x9F\x94\x8D Puoi cercare circolari scrivendo ad esempio <b>\"Circolare 220\"</b>, <b>\"Circolare sciopero\"</b>, <b>\"Circolari di ieri\"</b>, <b>\"Circolari di oggi\"</b> o <b>\"Circolari del 4/03/17\"</b>.");
             function Download_Html($url) {
                 $useragent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.1) Gecko/20061204 Firefox/2.0.0.1";
@@ -556,9 +558,37 @@
                 sendKeyboard($chat_id, "\xF0\x9F\x8E\x93 Seleziona un docente:", $array);
             }
              else if ($message == "Recupero/Potenziamento" && (strpos($last_command, '/orario') !== false)) {
-                sendChatAction($chat_id, UPLOAD_DOCUMENT);
-                sendDocument($chat_id, ITIS_URL . "/images/stories/orario/online/itismarconi-jesi_orario_potenziamento_mar-2108.pdf", "Orario Recupero/Potenziamento Marzo");
-                remove_keyboard($chat_id, "\xF0\x9F\x93\x86 Aggiornato al: 27/02/2018");
+                $dom = new DomDocument();
+                $content = Download_Html(ITIS_URL . "/orario-delle-lezioni.html");
+                @$dom->loadHTML($content);
+                $links = $dom->getElementsByTagName('a');
+    
+                if (time() < strtotime("last saturday of this month"))
+                {
+                    $mese = strftime("%B");
+                } else {
+                    $mese = strftime("%B", strtotime('+1 month'));
+                }
+    
+                $trovato = false;
+    
+                foreach ($links as $link) {
+                    $linktmp = $link->getattribute('href');
+                    $testo = strtolower($link->nodeValue);
+                    if (strpos($testo, "piano mese di") !== false && strpos($testo, $mese) && !$trovato) {
+                        sendChatAction($chat_id, UPLOAD_DOCUMENT);
+                        sendDocument($chat_id, ITIS_URL .$linktmp, "Orario Recupero/Potenziamento $mese");
+                        remove_keyboard($chat_id, "\xF0\x9F\x93\x86 Ecco l'orario per il mese di $mese");
+                        $trovato = true;
+                    }
+                }
+    
+                if (!$trovato)
+                {
+                    sendChatAction($chat_id, TYPING);
+                    remove_keyboard($chat_id, "\xF0\x9F\x98\x94 Orario Recupero/Potenziamento di $mese non trovato");
+                }
+
                 updateLastCommand($chat_id, NULL);
             } else if ($message == "/calendario" || $message == "/calendario@itismarconijesibot") {
                 sendChatAction($chat_id, TYPING);
