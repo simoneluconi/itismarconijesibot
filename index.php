@@ -561,6 +561,7 @@
                 $dom = new DomDocument();
                 $content = Download_Html(ITIS_URL . "/orario-delle-lezioni.html");
                 @$dom->loadHTML($content);
+                $links = $dom->getElementById('k2Container');
                 $links = $dom->getElementsByTagName('a');
     
                 if (time() < strtotime("last saturday of this month"))
