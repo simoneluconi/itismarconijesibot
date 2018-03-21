@@ -564,7 +564,7 @@
                 $links = $dom->getElementById('k2Container');
                 $links = $dom->getElementsByTagName('a');
     
-                if (time() < strtotime("last saturday of this month"))
+                if (date("Y-m-d", time()) <= date("Y-m-d", strtotime("last saturday of this month")))
                 {
                     $mese = strftime("%B");
                 } else {
@@ -579,7 +579,7 @@
                     if (strpos($testo, "piano mese di") !== false && strpos($testo, $mese) && !$trovato) {
                         sendChatAction($chat_id, UPLOAD_DOCUMENT);
                         sendDocument($chat_id, ITIS_URL .$linktmp, "Orario Recupero/Potenziamento $mese");
-                        remove_keyboard($chat_id, "\xF0\x9F\x93\x86 Ecco l'orario per il mese di $mese");
+                        remove_keyboard($chat_id, "\xF0\x9F\x93\x86 Ecco l'orario di recupero/potenziamento per il mese di $mese");
                         $trovato = true;
                     }
                 }
