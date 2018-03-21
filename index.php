@@ -975,8 +975,8 @@
                 $eventi = array_reverse($eventi);
                 foreach ($eventi as & $evento) {
                     $data_inizio = $evento['data_inizio'];
-                    $testo = $evento['testo'];
-                    $testo = $mysqli->real_escape_string($testo);
+                    $testoReal = $evento['testo'];
+                    $testo = $mysqli->real_escape_string($testoReal);
                     $result = $mysqli->query("SELECT * FROM db_eventi where evento='$testo' AND data_inizio='$data_inizio'", $link);
                     $num_rows = $result->num_rows;
                     if ($num_rows == 0) {
@@ -1000,7 +1000,7 @@
                             $ora = $evento['ora'];
                             $message = "\xF0\x9F\x93\x86 <b> $data_inizio </b>\n";
                             $message.= "\xF0\x9F\x95\x90 <b> $ora </b>\n";
-                            $message.= "\xE2\x9C\x8F $testo \n";
+                            $message.= "\xE2\x9C\x8F $testoReal \n";
                             if (!is_null($circolare_allegata))  $keyboard[] = array(array("text" => "\xF0\x9F\x93\x8E Circolare N. $numero_circolare", "callback_data" => "circolare://$numero_circolare"));
                             $evento_link = $evento['link'];
                             $result = $mysqli->query("INSERT INTO db_eventi (evento, data_inizio, ora, link, circolare_allegata) VALUES ('$testo', '$data_inizio', '$ora', '$evento_link', '$numero_circolare')");
@@ -1015,7 +1015,7 @@
                             $keyboard = array();
                             $data_fine = $evento['data_fine'];
                             $message = "\xF0\x9F\x93\x86 <b>" . $data_inizio . " - " . $data_fine . "</b>\n";
-                            $message.= "\xE2\x9C\x8F $testo \n";
+                            $message.= "\xE2\x9C\x8F $testoReal \n";
                             if (!is_null($circolare_allegata))  $keyboard[] = array(array("text" => "\xF0\x9F\x93\x8E Circolare N. $numero_circolare", "callback_data" => "circolare://$numero_circolare"));
                             $evento_link = $evento['link'];
                             $result = $mysqli->query("INSERT INTO db_eventi (evento, data_inizio, data_fine, link, circolare_allegata) VALUES ('$testo', '$data_inizio', '$data_fine', '$evento_link', '$numero_circolare')");
