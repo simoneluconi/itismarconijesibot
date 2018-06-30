@@ -1029,6 +1029,7 @@
                 }
             }
 
+            /*
             $dom = new DomDocument();
             $content = Download_Html(ITIS_URL . "/news.html");
             @$dom->loadHTML($content);
@@ -1048,7 +1049,7 @@
                 sendMessage("150543610", "Nuova News:\n<b>Titolo:</b> $title\n<b>Orario:</b> $time\n<b>Link:</b> $link");
                 echo "\xF0\x9F\x93\xB0 Nuova News:\n<b>Titolo:</b> $title\n<b>Orario:</b> $time\n<b>Link:</b> $link";
                 updateLastNews($title, $time);
-            }
+            }*/
 
             if(isset($_GET["usr"]))
             {
