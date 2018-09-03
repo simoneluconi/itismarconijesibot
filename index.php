@@ -302,7 +302,7 @@
                     printf("Connect failed: %s\n", $mysqli->connect_error);
                     exit();
                 }
-                $result = $mysqli->query("DELETE from db_bot_telegram_itis where chat_id='$chat_id'");
+                //$result = $mysqli->query("DELETE from db_bot_telegram_itis where chat_id='$chat_id'");
                 $result = $mysqli->query("INSERT INTO db_deleted (chat_id) VALUES ('$chat_id')");
                 $mysqli->close();
             }
@@ -476,7 +476,7 @@
                     if ($num_rows > 0) {
                         sendMessage($chat_id, "Hei $user_name mi ricordo di te! Bentornato! \xF0\x9F\x98\x83");
                         $mysqli->query("DELETE FROM db_deleted where chat_id='$chat_id'");
-                        $mysqli->query("INSERT INTO db_bot_telegram_itis (chat_id) VALUES ('$chat_id')");
+                        //$mysqli->query("INSERT INTO db_bot_telegram_itis (chat_id) VALUES ('$chat_id')");
                     }
                     else {
                         $result = $mysqli->query("SELECT * FROM db_bot_telegram_itis where chat_id='$chat_id'");
